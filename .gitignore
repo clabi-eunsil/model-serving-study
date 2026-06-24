@@ -1,0 +1,34 @@
+# Python virtual environments
+.venv/
+venv/
+env/
+
+# Python cache/build artifacts
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+
+# Local environment/secrets
+.env
+.env.*
+!.env.example
+
+# Benchmark and generated results
+results/
+*.csv
+*.log
+
+# OS/editor files
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/
+
+# Hugging Face / model caches if ever created inside the repo
+.cache/
+hf-cache/
+models/

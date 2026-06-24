@@ -1,0 +1,29 @@
+# Environment Summary
+
+Generated at: 2026-06-18T16:39:18+09:00
+
+## OS
+Distributor ID:	Ubuntu
+Description:	Ubuntu 24.04.1 LTS
+Release:	24.04
+Codename:	noble
+
+## Python
+python: not found
+Python 3.12.3
+
+## Docker
+
+The command 'docker' could not be found in this WSL 2 distro.
+We recommend to activate the WSL integration in Docker Desktop settings.
+
+For details about using Docker Desktop with WSL 2, visit:
+
+https://docs.docker.com/go/wsl2/
+
+
+## Kubernetes
+kubectl: not found
+
+## NVIDIA
+nvidia-smi: not found

@@ -1,0 +1,58 @@
+# Agent Instructions
+
+이 디렉터리에서는 모델 서빙 학습을 함께 진행한다. 답변과 파일 작성 시 아래 원칙을 따른다.
+
+## 응답 원칙
+
+- 기본 설명은 한국어로 작성한다.
+- 기술 용어, 명령어, API 이름, 옵션 이름은 영어를 그대로 사용해도 된다.
+- 실습에 필요한 핵심 정보는 빠뜨리지 않는다.
+- 확실하지 않거나 업데이트 가능성이 있는 정보는 확인 필요 여부를 명시한다.
+- 최신 버전, 지원 모델, 설치 방법, 라이선스, 클라우드/벤더 정책처럼 변할 수 있는 내용은 공식 문서 기준으로 확인한다.
+
+## 근거와 출처
+
+- 모든 학습 내용에는 가능한 한 근거 문서 URL을 함께 남긴다.
+- 우선순위는 공식 문서, GitHub repository, release notes, vendor docs 순서로 둔다.
+- 출처가 추정이거나 비공식 자료이면 그렇게 표시한다.
+
+## 실습 기록
+
+각 실습에는 가능하면 아래 정보를 남긴다. 사용자가 직접 빈칸을 채우게 두기보다, 기본값/예상 결과/확인 명령어를 먼저 작성해 둔다.
+
+- 실행한 명령어
+- 사용한 모델 이름과 버전 또는 revision
+- 실행 환경: OS, Python, CUDA, GPU, Docker, Kubernetes, 주요 package version
+- 설정 파일 또는 주요 옵션
+- 요청 payload 예시
+- 예상 response 형태와 실제 response를 비교할 포인트
+- 관측한 결과 예시: latency, throughput, tokens/sec, GPU memory, error log 등
+- 자주 발생하는 실패 원인과 해결 방법
+
+## 파일 생성 원칙
+
+- 실습은 따라 실행할 수 있도록 필요한 파일을 함께 만든다.
+- 필요에 따라 notebook, shell script, Dockerfile, docker-compose.yml, Kubernetes YAML, benchmark script를 작성한다.
+- 생성 파일에는 실행 순서를 알 수 있는 짧은 주석 또는 README 설명을 둔다.
+- 환경 확인이 필요한 실습에는 확인 명령어 또는 `01_check_env.sh` 같은 스크립트를 함께 제공한다.
+- Python 실습은 기본적으로 챕터별 `.venv`를 사용하도록 안내한다. 단, Docker/Kubernetes처럼 실행 환경이 container 또는 cluster 안에 있는 챕터는 host `.venv`가 필요 없는 이유를 명시한다.
+- 한 챕터 안에 script가 여러 개 있으면 실행 순서가 보이도록 `01_`, `02_`, `03_` prefix를 붙인다.
+- 선택 실습 script는 필수 흐름 뒤 번호에 배치하고 README에 선택 실습임을 표시한다.
+- lab notes는 빈 양식만 두지 않고, 예시 값과 예상 결과를 가능한 한 채워 둔다.
+- 실습용 code, shell script, YAML에는 처음 보는 사람이 흐름을 이해할 수 있도록 단계별 주석을 반드시 넣는다.
+- 주석은 "무엇을 하는지"뿐 아니라 "왜 필요한지"를 짧게 설명한다.
+- 특히 모델 로딩 위치, 서버 실행 위치, 요청 payload, 환경 변수, resource 설정, benchmark 측정 지점에는 주석을 남긴다.
+- 명령어는 복사해서 실행 가능한 형태로 작성한다.
+
+## 학습 진행 방식
+
+- 개념 설명 후 가능한 한 작은 실습으로 연결한다.
+- 실습 코드가 있으면 README에 "학습 포인트와 파일 안내"처럼 자연스러운 제목으로, 어떤 파일의 어느 부분을 봐야 하는지 설명한다.
+- framework, decorator, lifecycle, model loading, request validation, response schema, metrics처럼 새 개념이 코드로 등장하면 코드 위치와 역할을 연결해서 문서화한다.
+- README의 실습 섹션에는 반드시 "실습 마무리"를 포함한다.
+- "실습 마무리"에는 실행 중인 server/container 종료, `.venv` deactivate, Docker/Compose 정리, port forwarding 종료, 결과 기록 위치, 다음 실습 전 확인할 것을 포함한다.
+- 실습 결과를 바탕으로 다음 개념을 설명한다.
+- 루트 README 체크리스트는 전체 진도판이므로 너무 세분화하지 않는다.
+- 세부 검수표, 옵션별 확인 항목, 출력 해석은 각 챕터 README에 둔다.
+- README 체크리스트를 진행 상태 관리용으로 사용한다.
+- 실습 완료 시 관련 체크박스를 업데이트할 수 있다.
