@@ -92,6 +92,41 @@ prompt가 길면 prefill 단계가 길어진다.
 output token이 많으면 decode 단계가 길어진다.
 동시 요청이 늘어나면 각 요청의 KV cache가 GPU memory를 더 많이 사용한다.
 
+### 모델 동작과 Serving Engine 동작의 차이
+
+여기서 헷갈리기 쉬운 지점이 있다.
+`prefill`, `decode`는 모델이 한 요청을 처리할 때 거치는 inference 단계다.
+반면 `waiting`, `running`, `finished` 같은 상태를 관리하고 여러 요청을 어떤 순서로 GPU에 보낼지 결정하는 것은 vLLM serving engine의 scheduler 역할이다.
+
+즉, 두 층을 나누어 보면 이해하기 쉽다.
+
+| 관점 | 무엇을 설명하는가 | 예시 |
+| --- | --- | --- |
+| 모델 inference 과정 | 하나의 요청이 token을 처리하고 생성하는 방식 | prefill, decode, KV cache |
+| vLLM serving engine 과정 | 여러 요청을 받아 GPU 작업으로 배치하고 스케줄링하는 방식 | waiting queue, running sequence, finished request, continuous batching |
+
+하나의 요청은 대략 아래 흐름을 거친다.
+
+```text
+client request
+→ waiting: scheduler가 처리 순서를 기다림
+→ prefill: prompt token을 처리하고 KV cache를 만듦
+→ decode: output token을 하나씩 생성함
+→ finished: stop condition에 도달해 응답 완료
+```
+
+하지만 실제 server 안에서는 요청 하나만 있는 것이 아니다.
+어떤 요청은 긴 prompt 때문에 prefill 중이고, 어떤 요청은 이미 첫 token 이후 decode 중이고, 어떤 요청은 queue에서 기다리고, 어떤 요청은 방금 끝난 상태일 수 있다.
+vLLM의 scheduler는 이런 요청들을 계속 섞어 GPU가 가능한 한 쉬지 않게 만든다.
+
+이것이 continuous batching의 핵심이다.
+고정된 batch를 처음에 한 번 만들고 끝까지 같이 가는 것이 아니라, 실행 중인 batch에서 끝난 요청은 빠지고 새 요청은 들어온다.
+
+`sequence`는 모델이 처리 중인 token 줄이라고 볼 수 있다.
+실습에서는 보통 "요청 1개가 sequence 1개에 가깝다"고 이해하면 충분하다.
+따라서 `--max-num-seqs`는 vLLM scheduler가 동시에 관리할 active sequence 수의 상한이다.
+이 값을 키우면 더 많은 요청을 동시에 다룰 수 있지만, KV cache와 GPU memory 사용량도 늘 수 있다.
+
 ### vLLM Tuning Options
 
 | 옵션 | 의미 | 주의 |

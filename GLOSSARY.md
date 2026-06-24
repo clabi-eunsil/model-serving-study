@@ -168,3 +168,7 @@
 | Tensor Parallelism | 텐서 병렬화 | GPU & Runtime | multi-gpu, parallelism, tensor | [05](chapters/05-vllm-performance-tuning/README.md) | 큰 model tensor를 여러 GPU에 나누어 올리고 계산하는 병렬화 방식 |
 | Max Num Seqs | 최대 sequence 수 | Serving Engine | vllm, batching, scheduler | [05](chapters/05-vllm-performance-tuning/README.md) | vLLM scheduler가 동시에 처리할 수 있는 sequence 수의 상한을 정하는 option |
 | Max Num Batched Tokens | 최대 batch token 수 | Serving Engine | vllm, batching, tokens | [05](chapters/05-vllm-performance-tuning/README.md) | 한 scheduler iteration에서 batch로 묶을 수 있는 token 수의 상한을 정하는 option |
+| Request Lifecycle | 요청 생명주기 | Serving Engine | request, scheduler, lifecycle | [05](chapters/05-vllm-performance-tuning/README.md) | 요청이 waiting, prefill, decode, finished 같은 상태를 거쳐 응답 완료에 이르는 흐름 |
+| Active Sequence | 활성 sequence | Serving Engine | sequence, scheduler, running | [05](chapters/05-vllm-performance-tuning/README.md) | vLLM scheduler가 현재 처리 중이거나 관리 중인 token sequence. 실습에서는 요청 1개와 거의 대응한다고 이해하면 된다. |
+| Waiting Queue | 대기 queue | Serving Engine | queue, waiting, scheduler | [05](chapters/05-vllm-performance-tuning/README.md) | 아직 GPU 실행에 들어가지 못하고 scheduler의 처리 순서를 기다리는 요청 목록 |
+| Finished Request | 완료된 요청 | Serving Engine | finished, response, scheduler | [05](chapters/05-vllm-performance-tuning/README.md) | stop condition에 도달해 더 이상 token을 생성하지 않고 응답 반환을 마친 요청 |
