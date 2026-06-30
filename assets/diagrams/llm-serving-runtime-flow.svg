@@ -1,0 +1,83 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="560" viewBox="0 0 1200 560" role="img" aria-labelledby="title desc">
+  <title id="title">LLM serving runtime flow</title>
+  <desc id="desc">A flow diagram showing how an LLM serving runtime receives chat completion requests, schedules them, performs prefill and decode, uses KV cache, and streams tokens back to clients.</desc>
+  <style>
+    .bg { fill: #f8fafc; }
+    .title { font: 700 27px system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; fill: #111827; }
+    .subtitle { font: 400 15px system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; fill: #4b5563; }
+    .api { fill: #e8f4ff; stroke: #6a9ed4; stroke-width: 1.5; rx: 8; }
+    .engine { fill: #fff2d8; stroke: #d28b28; stroke-width: 1.5; rx: 8; }
+    .gpu { fill: #eaf7ee; stroke: #62a875; stroke-width: 1.5; rx: 8; }
+    .cache { fill: #f1ecff; stroke: #8b70c7; stroke-width: 1.5; rx: 8; }
+    .label { font: 700 16px system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; fill: #111827; }
+    .small { font: 400 13px system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; fill: #4b5563; }
+    .tiny { font: 400 12px system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; fill: #64748b; }
+    .arrow { stroke: #64748b; stroke-width: 2.2; fill: none; marker-end: url(#arrow); }
+    .dash { stroke: #8b97a8; stroke-width: 2; stroke-dasharray: 5 5; fill: none; marker-end: url(#arrow); }
+  </style>
+  <defs>
+    <marker id="arrow" markerWidth="10" markerHeight="10" refX="8" refY="3" orient="auto" markerUnits="strokeWidth">
+      <path d="M0,0 L0,6 L9,3 z" fill="#64748b" />
+    </marker>
+  </defs>
+
+  <rect class="bg" width="1200" height="560" />
+  <text class="title" x="48" y="58">LLM serving runtime 안에서는 무슨 일이 일어날까?</text>
+  <text class="subtitle" x="48" y="86">vLLM 같은 엔진은 HTTP API만 제공하는 것이 아니라 요청 스케줄링, prefill/decode, KV cache, streaming을 함께 다룬다.</text>
+
+  <rect class="api" x="56" y="150" width="190" height="92" />
+  <text class="label" x="100" y="182">클라이언트 요청</text>
+  <text class="small" x="86" y="207">/v1/chat/completions</text>
+  <text class="tiny" x="96" y="226">messages, model, options</text>
+
+  <rect class="api" x="292" y="150" width="190" height="92" />
+  <text class="label" x="350" y="182">API 서버</text>
+  <text class="small" x="324" y="207">요청 schema 확인</text>
+  <text class="small" x="324" y="226">인증, 라우팅 처리</text>
+
+  <rect class="engine" x="528" y="150" width="210" height="92" />
+  <text class="label" x="590" y="182">스케줄러</text>
+  <text class="small" x="562" y="207">대기열 관리</text>
+  <text class="small" x="562" y="226">연속 배치 처리</text>
+
+  <rect class="gpu" x="784" y="150" width="210" height="92" />
+  <text class="label" x="850" y="182">Prefill</text>
+  <text class="small" x="820" y="207">prompt token 전체 처리</text>
+  <text class="small" x="820" y="226">KV cache 초기 생성</text>
+
+  <rect class="gpu" x="784" y="278" width="210" height="92" />
+  <text class="label" x="856" y="310">Decode</text>
+  <text class="small" x="820" y="335">다음 token 하나씩 생성</text>
+  <text class="small" x="820" y="354">KV cache 읽기/갱신</text>
+
+  <rect class="cache" x="528" y="278" width="210" height="92" />
+  <text class="label" x="592" y="310">KV Cache</text>
+  <text class="small" x="562" y="335">이전 token 정보 저장</text>
+  <text class="small" x="562" y="354">context와 동시 요청에 비례</text>
+
+  <rect class="api" x="292" y="400" width="190" height="92" />
+  <text class="label" x="354" y="432">Streaming</text>
+  <text class="small" x="324" y="457">첫 token 반환</text>
+  <text class="small" x="324" y="476">chunk 단위로 이어서 전송</text>
+
+  <rect class="api" x="56" y="400" width="190" height="92" />
+  <text class="label" x="106" y="432">응답 수신</text>
+  <text class="small" x="92" y="457">content, usage</text>
+  <text class="small" x="92" y="476">latency 확인</text>
+
+  <text class="tiny" x="784" y="412">Prefill은 prompt를 처리하는 단계이고,</text>
+  <text class="tiny" x="784" y="432">Decode는 token을 하나씩 생성하는 단계다.</text>
+  <text class="tiny" x="784" y="456">Streaming은 decode로 만든 token을</text>
+  <text class="tiny" x="784" y="476">client에게 나누어 보내는 응답 방식이다.</text>
+  <text class="tiny" x="56" y="528">실선: 요청/응답의 주 흐름</text>
+  <text class="tiny" x="246" y="528">점선: KV cache 저장, 조회, 갱신 관계</text>
+
+  <path class="arrow" d="M246 196 L292 196" />
+  <path class="arrow" d="M482 196 L528 196" />
+  <path class="arrow" d="M738 196 L784 196" />
+  <path class="arrow" d="M889 242 L889 278" />
+  <path class="dash" d="M784 232 L738 300" />
+  <path class="dash" d="M738 348 L784 348" />
+  <path class="arrow" d="M889 370 L889 446 L482 446" />
+  <path class="arrow" d="M292 446 L246 446" />
+</svg>

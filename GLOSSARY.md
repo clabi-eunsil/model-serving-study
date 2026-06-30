@@ -22,6 +22,8 @@
 | Operations | 운영, health check, warmup, 장애 대응과 관련된 개념 |
 | Containerization | Docker image, container, volume처럼 application 실행 환경을 포장하는 개념 |
 | Serving Engine | vLLM, TensorRT-LLM처럼 모델 서빙을 위해 최적화된 engine 관련 개념 |
+| Serving Platform | Kubernetes 같은 환경 위에서 model server 배포, 라우팅, 확장을 관리하는 platform 개념 |
+| ML Workflow | 데이터 준비, 학습, 평가, 배포를 연결하는 pipeline과 workflow 개념 |
 | Development Environment | `.venv`, package install, script 실행처럼 실습 환경을 구성하는 개념 |
 | Model Registry & Auth | Hugging Face, Docker Hub, NGC, token처럼 모델/image 저장소와 인증 관련 개념 |
 | GPU & Runtime | CUDA, GPU memory, runtime option처럼 GPU 실행 환경과 관련된 개념 |
@@ -33,6 +35,19 @@
 | Model Serving | 모델 서빙 | Serving Basics | serving, deployment, inference | [01](chapters/01-basic-concepts/README.md) | 학습된 모델을 API 또는 service 형태로 배포해 외부 요청에 inference 결과를 반환하는 과정 |
 | Inference | 추론 | Serving Basics | prediction, model-output | [01](chapters/01-basic-concepts/README.md) | 학습된 모델에 입력을 넣고 예측 결과를 얻는 과정 |
 | Model Server | 모델 서버 | Serving Basics | server, runtime, api | [01](chapters/01-basic-concepts/README.md) | 모델 로딩, 요청 수신, 전처리, inference, 후처리, 응답 반환을 담당하는 서버 |
+| Inference Server | 추론 서버 | Serving Basics | server, inference, runtime | [01](chapters/01-basic-concepts/README.md) | 모델 추론을 실행하고 API로 결과를 반환하는 서버. model server와 거의 비슷하게 쓰이지만 inference 실행에 더 초점을 둔 표현 |
+| ML Serving Framework | ML 모델 서빙 프레임워크 | Serving Basics | framework, serving, general-ml | [01](chapters/01-basic-concepts/README.md) | TensorFlow, PyTorch, ONNX 같은 다양한 ML 모델을 운영 환경에서 서빙하기 위한 범용 framework |
+| LLM Serving Engine | LLM 서빙 엔진 | Serving Engine | llm-serving, engine, token-generation | [01](chapters/01-basic-concepts/README.md) | LLM의 token generation, KV cache, batching, streaming을 효율적으로 처리하는 데 특화된 inference engine |
+| Deployment Target | 배포 대상/실행 위치 | Serving Platform | local, docker, kubernetes | [01](chapters/01-basic-concepts/README.md) | model server를 어디에서 실행할지 나타내는 대상. 예: local Python process, Docker container, Kubernetes cluster |
+| Serving Platform | 서빙 플랫폼 | Serving Platform | kubernetes, deployment, serving | [01](chapters/01-basic-concepts/README.md) | model server나 serving runtime을 Kubernetes 같은 환경 위에서 배포, 확장, 라우팅하기 위한 platform 계층 |
+| ML Pipeline | ML 파이프라인 | ML Workflow | pipeline, workflow, training | [01](chapters/01-basic-concepts/README.md) | 데이터 준비, 학습, 평가, 모델 등록, 배포 같은 단계를 순서 있는 workflow로 연결한 것 |
+| Kubeflow | 쿠브플로우 | ML Workflow | kubeflow, mlops, platform | [01](chapters/01-basic-concepts/README.md) | Kubernetes 위에서 ML workflow, training, pipeline, serving을 구성하기 위한 MLOps platform |
+| Kubeflow Pipelines | 쿠브플로우 파이프라인 | ML Workflow | kubeflow, pipeline, workflow | [01](chapters/01-basic-concepts/README.md) | ML workflow를 component와 pipeline 형태로 정의하고 실행, 추적하는 Kubeflow 구성 요소 |
+| KServe | 케이서브 | Serving Platform | kserve, inferenceservice, kubernetes | [01](chapters/01-basic-concepts/README.md) | Kubernetes 위에서 model serving을 표준화하는 platform. `InferenceService` 리소스로 predictor, autoscaling, routing 등을 관리한다. Kubernetes를 대체하는 것이 아니라 그 위에 설치해 사용한다. |
+| Knative | 크네이티브 | Serving Platform | knative, serverless, kubernetes | [01](chapters/01-basic-concepts/README.md) | Kubernetes 위에서 serverless-style workload, autoscaling, request routing을 제공하는 구성요소. KServe 설치/운영 방식에 따라 함께 사용될 수 있다. |
+| TensorFlow Serving | 텐서플로우 서빙 | Serving Basics | tensorflow, serving-framework, general-ml | [01](chapters/01-basic-concepts/README.md) | TensorFlow 모델을 production 환경에서 서빙하기 위한 framework |
+| TorchServe | 토치서브 | Serving Basics | pytorch, serving-framework, general-ml | [01](chapters/01-basic-concepts/README.md) | PyTorch 모델을 handler 기반으로 패키징하고 API로 서빙하기 위한 framework |
+| NVIDIA Triton Inference Server | NVIDIA Triton 추론 서버 | Serving Basics | triton, multi-backend, inference-server | [01](chapters/01-basic-concepts/README.md) | TensorRT, ONNX Runtime, PyTorch, Python backend 등 여러 backend를 지원하는 NVIDIA의 범용 inference server |
 | API | Application Programming Interface, 애플리케이션 프로그래밍 인터페이스 | API & Protocol | interface, endpoint | [01](chapters/01-basic-concepts/README.md) | 다른 프로그램이 기능을 호출할 수 있도록 정해둔 약속. 모델 서버에서는 요청/응답 형식을 뜻하는 경우가 많다. |
 | Endpoint | 엔드포인트, 호출 주소 | API & Protocol | url, route, api | [01](chapters/01-basic-concepts/README.md) | API를 호출하는 구체적인 주소. 예: `/health`, `/generate`, `/v1/chat/completions` |
 | REST API | REST 방식 API | API & Protocol | http, json, api | [01](chapters/01-basic-concepts/README.md) | HTTP method, URL, JSON payload를 이용해 요청과 응답을 주고받는 API 방식 |
@@ -172,3 +187,13 @@
 | Active Sequence | 활성 sequence | Serving Engine | sequence, scheduler, running | [05](chapters/05-vllm-performance-tuning/README.md) | vLLM scheduler가 현재 처리 중이거나 관리 중인 token sequence. 실습에서는 요청 1개와 거의 대응한다고 이해하면 된다. |
 | Waiting Queue | 대기 queue | Serving Engine | queue, waiting, scheduler | [05](chapters/05-vllm-performance-tuning/README.md) | 아직 GPU 실행에 들어가지 못하고 scheduler의 처리 순서를 기다리는 요청 목록 |
 | Finished Request | 완료된 요청 | Serving Engine | finished, response, scheduler | [05](chapters/05-vllm-performance-tuning/README.md) | stop condition에 도달해 더 이상 token을 생성하지 않고 응답 반환을 마친 요청 |
+| NVIDIA NIM | NVIDIA Inference Microservice | Serving Engine | nvidia, nim, inference-microservice | [06](chapters/06-nvidia-nim/README.md) | NVIDIA가 model serving을 containerized microservice 형태로 제공하는 제품/런타임 |
+| Inference Microservice | 추론 마이크로서비스 | Serving Basics | microservice, serving, api | [06](chapters/06-nvidia-nim/README.md) | 모델 추론 기능을 독립적인 service/API 단위로 패키징한 것 |
+| NGC Catalog | NVIDIA GPU Cloud catalog | Model Registry & Auth | ngc, catalog, nvidia | [06](chapters/06-nvidia-nim/README.md) | NVIDIA container image, model, resource, license, 실행 방법을 확인하는 catalog |
+| NGC Container Registry | NGC 컨테이너 레지스트리 | Model Registry & Auth | nvcr, registry, docker | [06](chapters/06-nvidia-nim/README.md) | `nvcr.io` 주소로 접근하는 NVIDIA container image registry |
+| NGC API Key | NGC API 키 | Model Registry & Auth | ngc, api-key, secret | [06](chapters/06-nvidia-nim/README.md) | NGC registry login과 NIM artifact 접근에 사용하는 secret. Git repo에 저장하지 않는다. |
+| `nvcr.io` | NVIDIA container registry domain | Model Registry & Auth | nvcr, registry, docker-login | [06](chapters/06-nvidia-nim/README.md) | NVIDIA NGC container image를 pull할 때 사용하는 registry domain |
+| NIM Cache | NIM 캐시 | Operations | nim, cache, model-artifact | [06](chapters/06-nvidia-nim/README.md) | NIM container가 model artifact나 optimized engine cache를 재사용하기 위해 사용하는 저장 공간 |
+| Model Artifact | 모델 아티팩트 | Model Registry & Auth | model-files, artifact, cache | [06](chapters/06-nvidia-nim/README.md) | model weight, tokenizer, runtime profile, optimized engine처럼 모델 실행에 필요한 파일 묶음 |
+| Vendor-Provided Runtime | 벤더 제공 런타임 | Serving Engine | vendor, runtime, nim | [06](chapters/06-nvidia-nim/README.md) | NVIDIA 같은 vendor가 최적화와 패키징을 제공하는 serving runtime |
+| License Terms | 라이선스 조건 | Model Registry & Auth | license, terms, model-access | [06](chapters/06-nvidia-nim/README.md) | 모델/image를 사용할 때 따라야 하는 사용 조건. NIM 실행 전 NGC catalog에서 확인해야 한다. |

@@ -1,0 +1,62 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1120" height="560" viewBox="0 0 1120 560" role="img" aria-labelledby="title desc">
+  <title id="title">Serving runtime map</title>
+  <desc id="desc">A comparison map of direct FastAPI serving, general ML serving frameworks, LLM serving engines, packaged runtimes, and Kubernetes serving platforms.</desc>
+  <style>
+    .bg { fill: #fbfbfd; }
+    .title { font: 700 27px system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; fill: #172033; }
+    .subtitle { font: 400 15px system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; fill: #4b5563; }
+    .axis { stroke: #94a3b8; stroke-width: 2.5; marker-end: url(#arrow); }
+    .tick { stroke: #94a3b8; stroke-width: 1.5; }
+    .card { fill: #ffffff; stroke: #ccd6e2; stroke-width: 1.5; rx: 8; }
+    .direct { fill: #e8f4ff; stroke: #6a9ed4; }
+    .general { fill: #eaf7ee; stroke: #62a875; }
+    .llm { fill: #fff2d8; stroke: #d28b28; }
+    .vendor { fill: #f1ecff; stroke: #8b70c7; }
+    .platform { fill: #ffecec; stroke: #d66f6f; }
+    .label { font: 700 16px system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; fill: #111827; }
+    .small { font: 400 13px system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; fill: #4b5563; }
+    .tiny { font: 400 12px system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; fill: #64748b; }
+  </style>
+  <defs>
+    <marker id="arrow" markerWidth="10" markerHeight="10" refX="8" refY="3" orient="auto" markerUnits="strokeWidth">
+      <path d="M0,0 L0,6 L9,3 z" fill="#94a3b8" />
+    </marker>
+  </defs>
+  <rect class="bg" width="1120" height="560" />
+  <text class="title" x="48" y="58">서빙 도구를 어디에 놓고 볼까?</text>
+  <text class="subtitle" x="48" y="86">왼쪽은 직접 구현에 가깝고, 오른쪽은 운영 플랫폼에 가깝다. 위로 갈수록 LLM에 특화된 기능이 많다.</text>
+
+  <line class="axis" x1="122" y1="468" x2="1010" y2="468" />
+  <text class="tiny" x="96" y="500">직접 구현</text>
+  <text class="tiny" x="898" y="500">운영 추상화</text>
+  <line class="axis" x1="122" y1="468" x2="122" y2="120" />
+  <text class="tiny" x="48" y="124">LLM 특화</text>
+  <text class="tiny" x="44" y="470">범용 서빙</text>
+
+  <rect class="direct" x="168" y="366" width="176" height="72" rx="8" />
+  <text class="label" x="198" y="394">FastAPI 직접 구현</text>
+  <text class="small" x="194" y="418">학습용으로 구조 이해</text>
+
+  <rect class="general" x="386" y="330" width="200" height="86" rx="8" />
+  <text class="label" x="420" y="360">General ML Serving</text>
+  <text class="small" x="414" y="384">TensorFlow Serving</text>
+  <text class="small" x="414" y="402">TorchServe, Triton</text>
+
+  <rect class="llm" x="386" y="178" width="200" height="92" rx="8" />
+  <text class="label" x="432" y="208">LLM Engine</text>
+  <text class="small" x="416" y="232">vLLM, TGI, SGLang</text>
+  <text class="small" x="416" y="250">KV cache, streaming</text>
+
+  <rect class="vendor" x="628" y="164" width="188" height="94" rx="8" />
+  <text class="label" x="672" y="194">NVIDIA NIM</text>
+  <text class="small" x="660" y="218">vendor packaged</text>
+  <text class="small" x="660" y="236">container runtime</text>
+
+  <rect class="platform" x="846" y="236" width="188" height="104" rx="8" />
+  <text class="label" x="900" y="268">KServe</text>
+  <text class="small" x="876" y="292">Kubernetes 위에서</text>
+  <text class="small" x="876" y="310">serving runtime 배포</text>
+
+  <text class="tiny" x="168" y="142">LLM serving engine은 범용 model server보다 token 생성 과정에 더 깊게 관여한다.</text>
+  <text class="tiny" x="168" y="520">Kubeflow Pipelines는 이 그림의 오른쪽 바깥, 모델을 만들고 배포까지 연결하는 workflow 계층이다.</text>
+</svg>

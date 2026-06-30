@@ -95,7 +95,7 @@ output token이 많으면 decode 단계가 길어진다.
 ### 모델 동작과 Serving Engine 동작의 차이
 
 여기서 헷갈리기 쉬운 지점이 있다.
-`prefill`, `decode`는 모델이 한 요청을 처리할 때 거치는 inference 단계다.
+`prefill`, `decode`는 모델이 한 요청을 처리할 때 거치는 inference 단계다.  
 반면 `waiting`, `running`, `finished` 같은 상태를 관리하고 여러 요청을 어떤 순서로 GPU에 보낼지 결정하는 것은 vLLM serving engine의 scheduler 역할이다.
 
 즉, 두 층을 나누어 보면 이해하기 쉽다.
@@ -232,6 +232,40 @@ python client/04_benchmark_async.py \
 - `completion_tokens_per_second`
 - error가 있는지
 
+옵션 의미:
+
+| 옵션 | 의미 | 처음 바꿔볼 값 |
+| --- | --- | --- |
+| `--requests` | 전체 요청 수 | `8`, `16`, `32` |
+| `--concurrency` | 동시에 진행할 요청 수 | `1`, `2`, `4`, `8` |
+| `--prompt-size` | 입력 prompt 길이 | `short`, `medium`, `long` |
+| `--max-tokens` | 요청당 최대 output token 수 | `32`, `64`, `128` |
+| `--output` | 요청별 결과를 저장할 CSV 파일 | `results/bench_조건.csv` |
+
+처음 해볼 실험:
+
+```bash
+# baseline: 가장 가벼운 조건
+python client/04_benchmark_async.py --requests 8 --concurrency 1 --prompt-size short --max-tokens 32 --output results/baseline.csv
+
+# concurrency만 증가
+python client/04_benchmark_async.py --requests 16 --concurrency 4 --prompt-size short --max-tokens 32 --output results/concurrency4.csv
+
+# prompt 길이만 증가
+python client/04_benchmark_async.py --requests 8 --concurrency 1 --prompt-size long --max-tokens 32 --output results/long_prompt.csv
+
+# output 길이만 증가
+python client/04_benchmark_async.py --requests 8 --concurrency 1 --prompt-size short --max-tokens 128 --output results/long_output.csv
+```
+
+기대되는 변화:
+
+- `concurrency`를 올리면 어느 지점까지는 `requests_per_second`가 증가할 수 있다.
+- `concurrency`가 너무 높아지면 queueing 때문에 `latency_p95`가 증가할 수 있다.
+- `prompt-size`를 `short`에서 `long`으로 바꾸면 prefill 비용 때문에 latency가 증가할 수 있다.
+- `max-tokens`를 키우면 decode 시간이 길어져 total latency가 증가할 수 있다.
+- error가 생기면 latency 평균보다 `error` column과 server log를 먼저 본다.
+
 ### 6. matrix benchmark
 
 ```bash
@@ -246,6 +280,40 @@ bash scripts/05_run_benchmark_matrix.sh
 
 결과 CSV는 `results/` 아래에 저장된다.
 
+값을 직접 바꾸는 예:
+
+```bash
+# 빠르게 sanity check만 하고 싶을 때
+REQUESTS=6 \
+CONCURRENCY_LIST="1 2" \
+MAX_TOKENS_LIST="32" \
+PROMPT_SIZE_LIST="short" \
+bash scripts/05_run_benchmark_matrix.sh
+
+# concurrency 영향을 더 보고 싶을 때
+REQUESTS=24 \
+CONCURRENCY_LIST="1 2 4 8" \
+MAX_TOKENS_LIST="64" \
+PROMPT_SIZE_LIST="short" \
+bash scripts/05_run_benchmark_matrix.sh
+
+# prompt/output 길이 영향을 같이 보고 싶을 때
+REQUESTS=12 \
+CONCURRENCY_LIST="1 4" \
+MAX_TOKENS_LIST="32 128" \
+PROMPT_SIZE_LIST="short long" \
+bash scripts/05_run_benchmark_matrix.sh
+```
+
+matrix 결과를 볼 때는 한 파일만 보지 말고 조건별 추세를 비교한다.
+
+| 바꾼 조건 | 기대되는 관찰 |
+| --- | --- |
+| concurrency 증가 | throughput 증가 가능, p95 latency 악화 가능 |
+| prompt size 증가 | prefill 비용 증가, TTFT/latency 증가 가능 |
+| max tokens 증가 | decode 시간 증가, total latency 증가 가능 |
+| long prompt + 높은 concurrency | KV cache/GPU memory 압박 증가 가능 |
+
 ### 7. streaming TTFT benchmark
 
 ```bash
@@ -259,13 +327,50 @@ bash scripts/06_benchmark_streaming.sh
 - `ttft_p95`
 - `stream_total_seconds`
 
+값을 직접 바꾸는 예:
+
+```bash
+# baseline streaming
+CONCURRENCY=1 PROMPT_SIZE=short MAX_TOKENS=64 OUTPUT=results/stream_baseline.csv bash scripts/06_benchmark_streaming.sh
+
+# 동시 streaming 요청 증가
+CONCURRENCY=4 PROMPT_SIZE=short MAX_TOKENS=64 OUTPUT=results/stream_c4.csv bash scripts/06_benchmark_streaming.sh
+
+# 긴 prompt가 TTFT에 주는 영향 보기
+CONCURRENCY=2 PROMPT_SIZE=long MAX_TOKENS=64 OUTPUT=results/stream_long_prompt.csv bash scripts/06_benchmark_streaming.sh
+
+# 긴 output이 전체 완료 시간에 주는 영향 보기
+CONCURRENCY=2 PROMPT_SIZE=medium MAX_TOKENS=256 OUTPUT=results/stream_long_output.csv bash scripts/06_benchmark_streaming.sh
+```
+
+기대되는 변화:
+
+- `PROMPT_SIZE=long`은 첫 token 전에 처리할 prompt가 많아져 `ttft_*`가 증가할 수 있다.
+- `MAX_TOKENS` 증가는 첫 token보다 전체 완료 시간에 더 큰 영향을 줄 가능성이 높다.
+- `CONCURRENCY`가 높아지면 `ttft_p95`가 평균보다 더 많이 나빠질 수 있다.
+
 ### 8. GPU/server 상태 기록
 
 ```bash
 bash scripts/07_collect_gpu_metrics.sh
 ```
 
-benchmark 숫자만 보지 말고 `nvidia-smi`, GPU memory, server log를 함께 본다.
+이 script는 자동으로 파일에 저장하지 않고 terminal에 출력한다.
+기록으로 남기고 싶으면 직접 파일로 저장한다.
+
+```bash
+bash scripts/07_collect_gpu_metrics.sh | tee results/gpu_metrics_after_benchmark.txt
+```
+
+볼 것:
+
+| 위치 | 확인할 것 | 해석 |
+| --- | --- | --- |
+| `nvidia-smi` Memory-Usage | GPU memory가 거의 꽉 찼는가 | OOM 또는 KV cache 부족 위험 |
+| `nvidia-smi` GPU-Util | GPU가 충분히 바쁜가 | 낮으면 CPU/network/waiting 병목 가능 |
+| `nvidia-smi` Processes | vLLM process가 GPU memory를 쓰는가 | model이 GPU에 올라갔는지 확인 |
+| `docker ps` | `vllm-perf-server`가 Up 상태인가 | container가 죽었으면 benchmark 결과를 믿기 어렵다 |
+| `docker logs` | OOM, preemption, worker crash, model loading error | 성능 숫자보다 error 원인 확인이 우선 |
 
 ### 9. 실습 마무리
 

@@ -16,10 +16,87 @@
 ## 추천 진행 순서
 
 1. [../../GLOSSARY.md](../../GLOSSARY.md)를 읽고 챕터 1 핵심 용어를 확인한다.
-2. 아래 핵심 정리를 먼저 읽는다.
-3. [scripts/01_collect_env.sh](scripts/01_collect_env.sh)를 실행해서 현재 환경을 기록한다.
-4. 확인 질문을 보면서 내가 이해한 내용을 점검한다.
-5. 더 깊게 보고 싶은 문서는 [references.md](references.md)에서 확인한다.
+2. 아래 "모델 서빙 생태계 지도"를 보고 지금 공부하는 범위를 먼저 잡는다.
+3. 아래 핵심 정리를 먼저 읽는다.
+4. [scripts/01_collect_env.sh](scripts/01_collect_env.sh)를 실행해서 현재 환경을 기록한다.
+5. 확인 질문을 보면서 내가 이해한 내용을 점검한다.
+6. 더 깊게 보고 싶은 문서는 [references.md](references.md)에서 확인한다.
+
+## 모델 서빙 생태계 지도
+
+모델 서빙을 공부하다 보면 `vLLM`, `NIM`, `Triton`, `KServe`, `Kubeflow`가 모두 "모델 운영"과 관련 있어 보여서 헷갈릴 수 있다.
+하지만 이 도구들은 같은 일을 하는 경쟁 제품이라기보다, 서로 다른 레이어에서 다른 질문에 답하는 경우가 많다.
+
+![모델 서빙 생태계 지도](../../assets/diagrams/model-serving-ecosystem.svg)
+
+가장 먼저 아래처럼 나누어 이해한다.
+
+| 레이어 | 대표 도구 | 답하려는 질문 |
+| --- | --- | --- |
+| ML workflow / pipeline | Kubeflow Pipelines, Airflow, Argo Workflows | 데이터 준비, 학습, 평가, 배포까지의 과정을 어떻게 반복 가능하게 만들 것인가? |
+| Deployment target | Local Python process, Docker container, Kubernetes cluster | 모델 서버를 어디에서 실행할 것인가? |
+| Serving platform on Kubernetes | KServe, Knative/Gateway, Kubernetes Deployment/Service | Kubernetes 위에서 모델 서버를 어떻게 배포, 확장, 라우팅할 것인가? |
+| General ML serving framework | TensorFlow Serving, TorchServe, NVIDIA Triton | 다양한 ML framework의 모델을 API server로 어떻게 띄울 것인가? |
+| LLM serving engine | vLLM, TGI, SGLang | LLM의 token 생성, KV cache, batching, streaming을 어떻게 빠르게 처리할 것인가? |
+| Packaged/vendor runtime | NVIDIA NIM | vendor가 검증한 container/runtime/API 조합으로 어떻게 빠르게 운영할 것인가? |
+| Observability / evaluation | Prometheus, Grafana, Langfuse, DCGM Exporter | 운영 중인 모델의 latency, token usage, GPU 상태, prompt 품질을 어떻게 볼 것인가? |
+
+여기서 중요한 점은 **Kubernetes와 KServe/Knative를 같은 종류로 보면 안 된다**는 것이다.
+Kubernetes는 containerized workload를 실행하고 관리하는 기반이고, KServe와 Knative/Gateway는 Kubernetes 위에 설치해서 model serving 배포와 네트워킹을 더 편하게 다루도록 해주는 계층이다.
+
+예를 들어 같은 FastAPI 모델 서버라도 아래처럼 여러 방식으로 올릴 수 있다.
+
+```text
+python app/main.py
+  -> 로컬 Python process로 직접 실행
+
+docker run model-server
+  -> Docker container로 실행
+
+kubectl apply -f deployment.yaml
+  -> Kubernetes Deployment/Service로 실행
+
+kubectl apply -f inferenceservice.yaml
+  -> Kubernetes 위에서 KServe InferenceService로 실행
+```
+
+즉, KServe는 Kubernetes를 대체하는 것이 아니라 Kubernetes 위에서 model serving을 더 높은 수준으로 표현하게 해주는 도구다.
+Knative는 KServe가 serverless-style autoscaling, request routing 같은 기능을 사용할 때 함께 등장할 수 있는 Kubernetes 기반 구성요소다.
+
+### 지금 공부 흐름에서의 위치
+
+이 스터디의 앞부분은 **serving runtime**에 집중한다.
+챕터 2에서는 FastAPI로 가장 단순한 model server를 직접 만들고, 챕터 3에서는 Docker로 실행 환경을 포장한다.
+챕터 4와 5에서는 vLLM으로 LLM serving engine을 다루고, 챕터 6에서는 NVIDIA NIM처럼 vendor가 패키징한 runtime을 본다.
+
+Kubeflow는 조금 더 위쪽 레이어다.
+Kubeflow Pipelines는 모델을 직접 serving하는 엔진이라기보다, 데이터 처리, 학습, 평가, 배포 같은 ML workflow를 연결하는 도구다.
+그래서 모델 서빙을 먼저 공부한 뒤 Kubeflow로 넘어가면, pipeline의 마지막 단계인 "배포"가 실제로 어떤 runtime이나 platform으로 이어지는지 더 잘 보인다.
+
+공식 Kubeflow 문서의 lifecycle 그림도 이 관점에서 보면 좋다.
+아래 그림은 Kubeflow가 모델 개발부터 serving까지 이어지는 더 큰 흐름을 어떻게 보는지 보여준다.
+
+![Kubeflow overview platform diagram](../../assets/external/kubeflow/kubeflow-overview-platform-diagram.svg)
+
+출처: [Kubeflow Architecture 공식 문서](https://www.kubeflow.org/docs/started/architecture/)
+
+### 비슷해 보이는 용어 정리
+
+![서빙 도구 위치 지도](../../assets/diagrams/serving-runtime-map.svg)
+
+| 용어 | 쉬운 의미 | 예시 |
+| --- | --- | --- |
+| Model server | 모델을 메모리에 올리고 API 요청에 응답하는 서버 | 직접 만든 FastAPI app, vLLM server |
+| Inference server | model server와 거의 비슷하게 쓰이며, inference 실행에 초점을 둔 말 | Triton, TensorFlow Serving |
+| ML serving framework | 여러 종류의 ML 모델을 서빙하기 위한 범용 framework | TensorFlow Serving, TorchServe, Triton |
+| LLM serving engine | LLM token generation에 특화된 inference engine | vLLM, TGI, SGLang |
+| Packaged runtime | vendor가 runtime, container, API, 최적화 설정을 묶어 제공하는 형태 | NVIDIA NIM |
+| Deployment target | 모델 서버를 실행하는 위치나 방식 | Local Python, Docker, Kubernetes |
+| Serving platform | runtime을 Kubernetes 위에서 배포하고 운영하는 추상화 | KServe |
+| ML pipeline | 데이터 준비부터 학습, 평가, 배포까지의 workflow | Kubeflow Pipelines |
+
+정리하면, vLLM과 NIM은 "모델을 실제로 어떻게 빠르게 실행할 것인가"에 가깝고, Kubeflow는 "모델을 만들고 배포하기까지의 전체 과정을 어떻게 자동화할 것인가"에 가깝다.
+KServe는 그 중간에서 Kubernetes 위에 model server를 배포하는 platform 역할을 한다.
 
 ## 핵심 개념 요약
 
@@ -171,6 +248,9 @@ bash scripts/01_collect_env.sh
 | 질문 | 정리 방향 |
 | --- | --- |
 | 모델 서버와 일반 API 서버의 차이는 무엇인가? | 모델 서버는 API 처리 외에도 모델 로딩, GPU memory, inference scheduling, token streaming, metrics를 다룬다. |
+| vLLM과 TensorFlow Serving은 같은 종류의 도구인가? | 둘 다 모델 서빙에 쓰일 수 있지만, vLLM은 LLM token generation에 특화된 serving engine이고 TensorFlow Serving은 TensorFlow 모델 중심의 범용 serving framework다. |
+| Kubeflow Pipelines는 vLLM이나 NIM과 같은 레이어인가? | 아니다. Kubeflow Pipelines는 ML workflow를 자동화하는 pipeline 계층이고, vLLM/NIM은 모델 요청을 실제로 처리하는 serving runtime 계층이다. |
+| KServe는 어디에 위치하는가? | Kubernetes 위에서 model server/runtime을 배포하고 라우팅, autoscaling 같은 운영 기능을 제공하는 serving platform에 가깝다. |
 | REST API와 gRPC의 차이는 무엇인가? | REST는 HTTP/JSON 중심이라 테스트가 쉽고, gRPC는 RPC/protobuf/HTTP2 기반이라 내부 고성능 통신에 적합하다. RPC는 다른 서버의 함수를 호출하듯 통신하는 방식이다. |
 | OpenAI-compatible API가 있으면 왜 편한가? | client 코드를 크게 바꾸지 않고 vLLM, NIM, KServe 같은 backend를 교체할 수 있다. |
 | chatbot에는 online inference와 batch inference 중 무엇이 맞는가? | 사용자가 기다리는 대화형 서비스이므로 online inference가 맞다. latency, 특히 TTFT와 p95/p99가 중요하다. |

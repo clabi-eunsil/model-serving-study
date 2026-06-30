@@ -12,6 +12,11 @@
 | vLLM production metrics | https://docs.vllm.ai/en/latest/usage/metrics.html | 실제 운영에서 어떤 metrics를 노출하고 Prometheus로 어떻게 볼 수 있는지 확인한다. |
 | NVIDIA NIM for LLMs | https://docs.nvidia.com/nim/large-language-models/latest/introduction.html | NIM이 어떤 형태의 inference microservice인지, OpenAI-compatible endpoint와 container 운영 방식을 본다. |
 | KServe documentation | https://kserve.github.io/website/ | KServe가 Kubernetes 위에서 model serving을 어떻게 추상화하는지, `InferenceService`와 LLM serving 예시를 본다. |
+| Kubeflow Architecture | https://www.kubeflow.org/docs/started/architecture/ | Kubeflow가 ML lifecycle과 pipeline, serving을 전체 플랫폼 관점에서 어떻게 위치시키는지 본다. |
+| Kubeflow Pipelines introduction | https://www.kubeflow.org/docs/components/pipelines/ | Kubeflow Pipelines가 model serving engine이 아니라 ML workflow/pipeline 계층이라는 점을 확인한다. |
+| TensorFlow Serving | https://www.tensorflow.org/tfx/guide/serving | TensorFlow 모델을 production serving에 올리는 범용 serving framework의 예시로 본다. |
+| TorchServe | https://pytorch.org/serve/ | PyTorch 모델 serving framework의 구조와 handler 개념을 확인한다. |
+| NVIDIA Triton Inference Server | https://docs.nvidia.com/deeplearning/triton-inference-server/user-guide/docs/ | 여러 backend를 지원하는 inference server가 vLLM 같은 LLM 전용 engine과 어떻게 다른지 비교할 때 본다. |
 | Kubernetes Deployments | https://kubernetes.io/docs/concepts/workloads/controllers/deployment/ | 모델 서버를 Pod replica로 운영할 때 Deployment가 어떤 역할을 하는지 본다. |
 | Kubernetes Services | https://kubernetes.io/docs/concepts/services-networking/service/ | Pod 뒤의 안정적인 endpoint를 제공하는 Service 개념을 본다. |
 | Kubernetes Ingress | https://kubernetes.io/docs/concepts/services-networking/ingress/ | cluster 밖에서 HTTP endpoint로 접근시키는 방법을 본다. |

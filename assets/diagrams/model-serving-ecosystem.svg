@@ -1,0 +1,85 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="820" viewBox="0 0 1200 820" role="img" aria-labelledby="title desc">
+  <title id="title">Model serving ecosystem map</title>
+  <desc id="desc">A layered map showing the relationship between ML pipelines, model registries, serving runtimes, Kubernetes serving platforms, and observability tools.</desc>
+  <style>
+    .bg { fill: #f7f8fb; }
+    .title { font: 700 28px system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; fill: #14213d; }
+    .subtitle { font: 400 15px system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; fill: #46515f; }
+    .band-title { font: 700 18px system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; fill: #111827; }
+    .label { font: 600 15px system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; fill: #1f2937; }
+    .small { font: 400 13px system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; fill: #4b5563; }
+    .tiny { font: 400 12px system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; fill: #536171; }
+    .card { fill: #ffffff; stroke: #c9d2df; stroke-width: 1.5; rx: 8; }
+    .ml { fill: #e8f4ff; stroke: #7aa7d9; }
+    .llm { fill: #fff3db; stroke: #d79b36; }
+    .platform { fill: #eaf7ee; stroke: #6aae7a; }
+    .ops { fill: #f1ecff; stroke: #9272cf; }
+    .arrow { stroke: #6b7280; stroke-width: 2.2; fill: none; marker-end: url(#arrow); }
+    .dash { stroke: #8b97a8; stroke-width: 2; stroke-dasharray: 6 6; fill: none; marker-end: url(#arrow); }
+  </style>
+  <defs>
+    <marker id="arrow" markerWidth="10" markerHeight="10" refX="8" refY="3" orient="auto" markerUnits="strokeWidth">
+      <path d="M0,0 L0,6 L9,3 z" fill="#6b7280" />
+    </marker>
+  </defs>
+
+  <rect class="bg" x="0" y="0" width="1200" height="820" />
+  <text class="title" x="48" y="58">모델 서빙 생태계 지도</text>
+  <text class="subtitle" x="48" y="86">vLLM, NIM, Triton, KServe, Kubeflow는 모두 "모델 운영"과 관련 있지만, 맡는 레이어가 다르다.</text>
+
+  <rect class="card" x="48" y="122" width="1104" height="108" />
+  <text class="band-title" x="72" y="156">1. ML workflow / pipeline layer</text>
+  <text class="small" x="72" y="184">Kubeflow Pipelines, Airflow, Argo Workflows</text>
+  <text class="tiny" x="600" y="150">질문: 데이터 준비, 학습, 평가, 배포를</text>
+  <text class="tiny" x="600" y="170">반복 가능한 workflow로 만들 것인가?</text>
+  <text class="tiny" x="600" y="198">핵심: pipeline, experiment, artifact, model registry</text>
+
+  <rect class="card" x="48" y="264" width="1104" height="130" />
+  <text class="band-title" x="72" y="298">2. Deployment target / serving platform layer</text>
+  <rect class="platform" x="72" y="320" width="204" height="38" rx="8" />
+  <text class="label" x="104" y="345">Local Python</text>
+  <rect class="platform" x="300" y="320" width="204" height="38" rx="8" />
+  <text class="label" x="342" y="345">Docker</text>
+  <rect class="platform" x="528" y="320" width="204" height="38" rx="8" />
+  <text class="label" x="570" y="345">Kubernetes</text>
+  <text class="tiny" x="540" y="376">on Kubernetes: KServe, Knative/Gateway</text>
+  <text class="tiny" x="780" y="304">질문: 어디에 올리고</text>
+  <text class="tiny" x="780" y="324">어떤 추상화로 운영할 것인가?</text>
+  <text class="tiny" x="780" y="354">KServe/Knative는 Kubernetes 위에 설치된다.</text>
+
+  <rect class="card" x="48" y="430" width="1104" height="178" />
+  <text class="band-title" x="72" y="464">3. Serving runtime / inference server layer</text>
+  <rect class="ml" x="72" y="492" width="184" height="62" rx="8" />
+  <text class="label" x="100" y="516">General ML</text>
+  <text class="small" x="98" y="538">TF Serving, TorchServe</text>
+  <rect class="ml" x="280" y="492" width="184" height="62" rx="8" />
+  <text class="label" x="310" y="516">Multi-backend</text>
+  <text class="small" x="312" y="538">NVIDIA Triton</text>
+  <rect class="llm" x="488" y="492" width="184" height="62" rx="8" />
+  <text class="label" x="530" y="516">LLM engine</text>
+  <text class="small" x="530" y="538">vLLM, TGI, SGLang</text>
+  <rect class="llm" x="696" y="492" width="184" height="62" rx="8" />
+  <text class="label" x="736" y="516">Packaged LLM</text>
+  <text class="small" x="738" y="538">NVIDIA NIM</text>
+  <text class="tiny" x="904" y="484">질문: 모델을 메모리에 올리고</text>
+  <text class="tiny" x="904" y="504">요청마다 inference를 어떻게 수행할 것인가?</text>
+  <text class="tiny" x="904" y="534">LLM 핵심: KV cache, streaming, batching</text>
+  <text class="tiny" x="904" y="554">그리고 request scheduler</text>
+
+  <rect class="card" x="48" y="642" width="1104" height="116" />
+  <text class="band-title" x="72" y="676">4. Observability / evaluation layer</text>
+  <rect class="ops" x="72" y="696" width="204" height="32" rx="8" />
+  <text class="small" x="105" y="716">Prometheus / Grafana</text>
+  <rect class="ops" x="300" y="696" width="204" height="32" rx="8" />
+  <text class="small" x="355" y="716">Langfuse</text>
+  <rect class="ops" x="528" y="696" width="204" height="32" rx="8" />
+  <text class="small" x="568" y="716">DCGM Exporter</text>
+  <text class="tiny" x="780" y="690">질문: 운영 중인 모델의 latency, token usage,</text>
+  <text class="tiny" x="780" y="710">GPU 상태, prompt 품질을 어떻게 볼 것인가?</text>
+  <text class="tiny" x="780" y="738">핵심: metrics, traces, logs, evaluation, dashboard</text>
+
+  <path class="arrow" d="M600 230 L600 260" />
+  <path class="arrow" d="M600 394 L600 426" />
+  <path class="arrow" d="M600 608 L600 638" />
+  <path class="dash" d="M896 602 C990 618, 990 642, 896 676" />
+</svg>
