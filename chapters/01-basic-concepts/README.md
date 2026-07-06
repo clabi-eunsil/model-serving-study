@@ -124,6 +124,42 @@ KServe는 그 중간에서 Kubernetes 위에 model server를 배포하는 platfo
 
 Concurrency를 높이면 throughput은 좋아질 수 있지만, queueing이 생겨 latency가 증가할 수 있다.
 
+### Cold Start, Model Loading, Warmup
+
+모델 서버에서 "서버가 켜졌다"와 "빠르게 요청을 처리할 준비가 됐다"는 다르다.
+이 차이를 이해할 때 cold start, model loading, warmup을 구분하면 좋다.
+
+| 용어 | 쉬운 의미 | 언제 보이나 |
+| --- | --- | --- |
+| Model loading time | 모델 weight, tokenizer, config를 읽어 CPU/GPU memory에 올리는 시간 | server 시작 시점 |
+| Cold start | 준비가 덜 된 상태에서 첫 요청이 들어와 초기화 비용까지 함께 치르는 상황 | 첫 요청 또는 scale-out 직후 |
+| Warmup | 실제 traffic 전에 일부러 가벼운 요청을 보내 초기화 비용을 미리 치르는 과정 | benchmark 전, production traffic 연결 전 |
+
+예를 들어 vLLM container나 FastAPI model server를 처음 띄우면 다음 일이 순서대로 일어날 수 있다.
+
+```text
+container/process 시작
+→ Python package import
+→ model config/tokenizer 읽기
+→ model weight 다운로드 또는 local cache 확인
+→ model weight를 CPU/GPU memory에 로딩
+→ CUDA context, kernel, memory allocator 준비
+→ 첫 inference에서 내부 buffer/cache 일부 생성
+→ 이후 요청부터 더 안정적인 latency로 처리
+```
+
+Cold start가 문제인 이유는 첫 사용자가 이 비용을 그대로 기다릴 수 있기 때문이다.
+모델이 크거나 GPU 초기화가 필요한 경우 첫 요청 latency가 평소보다 훨씬 길어질 수 있다.
+
+Warmup은 이 비용을 사용자 traffic 전에 미리 지불하는 방법이다.
+보통 `/health`로 server가 살아 있는지 확인한 뒤, 짧은 `/generate` 또는 `/v1/chat/completions` 요청을 한두 번 보내서 실제 inference 경로까지 지나가게 한다.
+benchmark를 할 때도 warmup을 먼저 하는 이유는 "첫 요청 초기화 비용"과 "평소 처리 성능"을 섞어서 해석하지 않기 위해서다.
+
+이 과정이 전부 KV cache 때문인 것은 아니다.
+KV cache는 LLM이 prompt를 처리하고 token을 생성하는 동안 만들어지는 runtime memory다.
+따라서 긴 prompt, 긴 output, 높은 concurrency에서는 KV cache가 GPU memory와 latency에 큰 영향을 준다.
+하지만 cold start와 warmup에는 KV cache 외에도 model loading, tokenizer loading, CUDA 초기화, kernel 준비, memory allocation, container startup 같은 비용이 함께 들어간다.
+
 ### LLM Serving Metrics
 
 - TTFB: Time To First Byte. HTTP 응답의 첫 byte가 도착하기까지 걸린 시간.
@@ -204,7 +240,7 @@ TTFT는 LLM streaming 관점의 첫 token 도착 시간이다. 사용자가 "응
 
 TTFP는 Time To First Prediction으로 쓰이지만 도구마다 의미가 다를 수 있다. 이 스터디에서는 TTFP를 사용할 때 반드시 "첫 예측"이 무엇인지 정의한다.
 
-TPS 또는 tokens/sec는 초당 token 처리량이다. LLM에서는 requests/sec보다 tokens/sec가 더 중요한 경우가 많다. 요청 하나가 10 token을 생성하는 경우와 1000 token을 생성하는 경우는 같은 1 request라도 부하가 완전히 다르기 때문이다.
+TPS 또는 tokens/sec는 초당 token 처리량이다. **LLM에서는 requests/sec보다 tokens/sec가 더 중요한 경우가 많다. 요청 하나가 10 token을 생성하는 경우와 1000 token을 생성하는 경우는 같은 1 request라도 부하가 완전히 다르기 때문이다.**
 
 QPS는 초당 요청 수다. 짧고 균일한 요청이 많을 때 유용하지만, LLM에서는 prompt length와 output length를 함께 봐야 한다.
 

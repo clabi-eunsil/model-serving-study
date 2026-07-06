@@ -92,7 +92,7 @@ Docker, Kubernetes, KServe처럼 실행 환경이 container나 cluster 안에 �
 - [x] 5. vLLM 성능 튜닝: [chapters/05-vllm-performance-tuning/README.md](chapters/05-vllm-performance-tuning/README.md)
 - [x] 6. NVIDIA NIM: [chapters/06-nvidia-nim/README.md](chapters/06-nvidia-nim/README.md)
 - [x] 7. 성능 테스트 방법론: [chapters/07-performance-methodology/README.md](chapters/07-performance-methodology/README.md)
-- [ ] 8. 모델 서빙 관측성
+- [x] 8. 모델 서빙 관측성: [chapters/08-serving-observability/README.md](chapters/08-serving-observability/README.md)
 - [ ] 9. Langfuse와 LLM Observability
 - [ ] 10. Kubernetes 기반 모델 배포
 - [ ] 11. KServe 입문
@@ -202,16 +202,18 @@ Docker, Kubernetes, KServe처럼 실행 환경이 container나 cluster 안에 �
 
 ## 8. 모델 서빙 관측성
 
-- [ ] 모델 서버에서 필요한 metrics 정의
-- [ ] Prometheus metrics format 이해
-- [ ] Grafana dashboard 기본 구성 이해
-- [ ] DCGM exporter로 GPU metrics 수집하는 방법 학습
-- [ ] API latency, error rate, throughput 수집 방법 이해
-- [ ] token usage, prompt length, completion length 추적 항목 정리
-- [ ] 실습: FastAPI `/metrics` endpoint 만들기
-- [ ] 실습: Prometheus로 metrics scrape
-- [ ] 실습: Grafana dashboard 구성
-- [ ] 실습: DCGM exporter로 GPU utilization 확인
+- [x] 모델 서버에서 필요한 metrics 정의
+- [x] Prometheus metrics format 이해
+- [x] Grafana dashboard 기본 구성 이해
+- [x] DCGM exporter로 GPU metrics 수집하는 방법 학습
+- [x] API latency, error rate, throughput 수집 방법 이해
+- [x] token usage, prompt length, completion length 추적 항목 정리
+- [x] 실습: FastAPI `/metrics` endpoint 만들기
+- [x] 실습: Prometheus로 metrics scrape
+- [x] 실습: Grafana dashboard 구성
+- [x] 실습: DCGM exporter로 GPU utilization 확인
+
+자료: [chapters/08-serving-observability/README.md](chapters/08-serving-observability/README.md)
 
 ## 9. Langfuse와 LLM Observability
 

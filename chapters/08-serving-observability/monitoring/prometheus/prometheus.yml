@@ -1,0 +1,20 @@
+global:
+  # 실습에서는 5초마다 scrape한다.
+  # 운영에서는 target 수, 저장 비용, 필요한 해상도에 따라 값을 조정한다.
+  scrape_interval: 5s
+
+scrape_configs:
+  - job_name: "model-server"
+    # host.docker.internal은 Docker Desktop에서는 보통 동작한다.
+    # Linux 환경에서는 docker compose 실행 시 host-gateway 설정이 필요할 수 있다.
+    # 그런 경우 README의 troubleshooting을 참고한다.
+    # FastAPI mount endpoint는 /metrics 요청을 /metrics/로 redirect할 수 있다.
+    # scrape 때 redirect를 거치지 않도록 trailing slash를 명시한다.
+    metrics_path: "/metrics/"
+    static_configs:
+      - targets: ["host.docker.internal:8000"]
+
+  - job_name: "dcgm-exporter"
+    metrics_path: "/metrics"
+    static_configs:
+      - targets: ["dcgm-exporter:9400"]

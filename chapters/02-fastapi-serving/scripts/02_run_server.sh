@@ -5,8 +5,11 @@ set -euo pipefail
 # 실행 전에는 현재 디렉터리가 chapters/02-fastapi-serving 이어야 한다.
 #
 # uvicorn app.main:app 의 의미:
-# - app/main.py 파일을 import한다.
-# - 그 파일 안에 있는 FastAPI 객체 app을 HTTP server에 연결한다.
+# - 첫 번째 app은 app/ 디렉터리다.
+# - app/__init__.py가 있으므로 Python은 app/을 package처럼 import할 수 있다.
+# - main은 app/main.py 파일이다.
+# - 마지막 app은 main.py 안에 있는 FastAPI 객체 이름이다.
+# - 결과적으로 "app/main.py의 app 객체를 HTTP server에 연결한다"는 뜻이다.
 # - app 생성 시 연결한 lifespan()이 실행되면서 모델이 로딩된다.
 #
 # 옵션:

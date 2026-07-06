@@ -63,9 +63,9 @@
 | Concurrency | 동시성 | Performance | concurrent-requests, load | [01](chapters/01-basic-concepts/README.md) | 동시에 처리되거나 대기 중인 요청 수 |
 | Queueing | 대기열 발생 | Performance | queue, overload, tail-latency | [01](chapters/01-basic-concepts/README.md) | 처리 가능한 용량보다 요청이 많아 일부 요청이 기다리는 현상 |
 | Tail Latency | 꼬리 지연 시간 | Performance | p95, p99, latency | [01](chapters/01-basic-concepts/README.md) | 가장 느린 일부 요청의 latency. p95, p99 같은 percentile로 자주 본다. |
-| Cold Start | 콜드 스타트 | Operations | startup, model-loading | [01](chapters/01-basic-concepts/README.md) | 서버 또는 모델이 준비되지 않은 상태에서 첫 요청을 처리하며 초기화 비용이 발생하는 상황 |
-| Warmup | 워밍업 | Operations | startup, cuda, cache | [01](chapters/01-basic-concepts/README.md) | 실제 트래픽 전에 모델 로딩, CUDA kernel 준비, cache 초기화 등을 미리 수행하는 과정 |
-| Model Loading Time | 모델 로딩 시간 | Operations | model-weights, startup | [01](chapters/01-basic-concepts/README.md) | 모델 weight와 tokenizer 등을 디스크나 원격 저장소에서 읽어 메모리/GPU에 올리는 데 걸리는 시간 |
+| Cold Start | 콜드 스타트 | Operations | startup, model-loading, latency | [01](chapters/01-basic-concepts/README.md) | 준비가 덜 된 server나 새로 뜬 replica가 첫 요청을 처리하면서 model loading, CUDA 초기화, cache/buffer 준비 같은 초기화 비용까지 함께 치르는 상황 |
+| Warmup | 워밍업 | Operations | startup, cuda, cache, benchmark | [01](chapters/01-basic-concepts/README.md) | 실제 사용자 traffic이나 benchmark 전에 가벼운 요청을 미리 보내 model loading 이후 inference 경로, CUDA kernel, memory allocation 등을 준비시키는 과정 |
+| Model Loading Time | 모델 로딩 시간 | Operations | model-weights, startup | [01](chapters/01-basic-concepts/README.md) | 모델 weight, tokenizer, config 등을 디스크나 원격 저장소에서 읽어 CPU/GPU memory에 올리는 데 걸리는 시간. cold start를 구성하는 주요 비용 중 하나 |
 | Token | 토큰 | LLM Internals | tokenizer, generation | [01](chapters/01-basic-concepts/README.md) | 모델이 텍스트를 처리하는 기본 단위. 한 글자, 단어 조각, 단어에 가까운 단위가 될 수 있다. |
 | Autoregressive Generation | 자기회귀 생성 | LLM Internals | generation, token, decoder | [01](chapters/01-basic-concepts/README.md) | 이전에 생성한 token들을 다시 입력 문맥으로 사용해 다음 token을 하나씩 생성하는 방식 |
 | Transformer Decoder | 트랜스포머 디코더 | LLM Internals | transformer, decoder, llm | [01](chapters/01-basic-concepts/README.md) | 이전 token 문맥을 보고 다음 token을 예측하는 Transformer 구성 요소. GPT 계열 LLM은 decoder-only 구조가 많다. |
@@ -76,6 +76,8 @@
 | TTFP | 첫 예측까지 걸린 시간 | Performance | first-prediction, latency | [01](chapters/01-basic-concepts/README.md) | Time To First Prediction. 도구나 조직마다 정의가 다를 수 있어 사용할 때 정의를 함께 적어야 함 |
 | TPS | 초당 토큰 수 | Performance | tokens-sec, throughput | [01](chapters/01-basic-concepts/README.md) | Tokens Per Second. 초당 생성 또는 처리한 token 수 |
 | QPS | 초당 요청 수 | Performance | queries-sec, throughput | [01](chapters/01-basic-concepts/README.md) | Queries Per Second. 초당 처리한 요청 수 |
+| Requests/sec | 초당 요청 수 | Performance | requests-sec, qps, traffic | [01](chapters/01-basic-concepts/README.md), [08](chapters/08-serving-observability/README.md) | API server가 초당 처리한 request 개수. traffic 규모를 보기 좋지만, LLM에서는 요청마다 prompt/output 길이가 달라 workload 크기를 완전히 설명하지 못할 수 있다. |
+| Tokens/sec | 초당 토큰 처리량 | Performance | tokens-sec, throughput, llm | [01](chapters/01-basic-concepts/README.md), [08](chapters/08-serving-observability/README.md) | LLM이 초당 생성하거나 처리한 token 수. 긴 prompt와 긴 output의 비용을 request 수보다 더 잘 반영하므로 LLM workload를 볼 때 중요하다. |
 | Continuous Batching | 연속 배치 처리 | Performance | batching, scheduler, throughput | [01](chapters/01-basic-concepts/README.md) | LLM serving에서 진행 중인 batch에 새 요청을 계속 합류시키며 GPU 활용도를 높이는 scheduling 방식 |
 | FastAPI | FastAPI Python web framework | Application Framework | python, api, pydantic | [02](chapters/02-fastapi-serving/README.md) | Python type hint를 기반으로 HTTP API를 만들고 request validation과 OpenAPI 문서화를 제공하는 framework |
 | ASGI | Asynchronous Server Gateway Interface | Application Framework | python, async, server | [02](chapters/02-fastapi-serving/README.md) | Python 비동기 web server와 application 사이의 interface 규격 |
@@ -210,3 +212,20 @@
 | Locust | Locust 부하 테스트 도구 | Performance | locust, python, load-test | [07](chapters/07-performance-methodology/README.md) | Python으로 사용자 행동 기반 load test를 작성하는 도구 |
 | hey | hey HTTP benchmark 도구 | Performance | hey, http, benchmark | [07](chapters/07-performance-methodology/README.md) | 단순 HTTP endpoint에 빠르게 부하를 주는 command line benchmark 도구 |
 | wrk | wrk HTTP benchmark 도구 | Performance | wrk, http, benchmark | [07](chapters/07-performance-methodology/README.md) | 높은 부하의 HTTP benchmark를 수행하는 command line 도구 |
+| Observability | 관측성 | Operations | metrics, logs, traces | [08](chapters/08-serving-observability/README.md) | 시스템 밖에서 수집한 신호로 내부 상태를 추론할 수 있게 하는 능력. metrics, logs, traces가 대표 신호다. |
+| Metrics | 메트릭, 수치 지표 | Operations | prometheus, monitoring, time-series | [08](chapters/08-serving-observability/README.md) | 시간에 따라 변하는 수치 데이터. 예: latency, requests/sec, GPU memory |
+| Time Series | 시계열 데이터 | Operations | metrics, prometheus, timestamp | [08](chapters/08-serving-observability/README.md) | timestamp와 함께 저장되는 metric 값의 연속 |
+| Prometheus | 프로메테우스 | Operations | metrics, scrape, prometheus | [08](chapters/08-serving-observability/README.md) | target의 `/metrics` endpoint를 주기적으로 scrape해 time series metric을 저장하고 PromQL로 query하는 monitoring system |
+| Scrape | 스크레이프, 가져오기 | Operations | prometheus, scrape, target | [08](chapters/08-serving-observability/README.md) | Prometheus가 target endpoint에 HTTP 요청을 보내 metrics를 가져오는 동작 |
+| Prometheus Target | 프로메테우스 타깃 | Operations | prometheus, scrape, endpoint | [08](chapters/08-serving-observability/README.md) | Prometheus가 scrape할 대상 endpoint. 예: `host.docker.internal:8000` |
+| PromQL | Prometheus Query Language | Operations | prometheus, query, promql | [08](chapters/08-serving-observability/README.md) | Prometheus에 저장된 time series를 조회하고 집계하는 query language |
+| Counter | 카운터 | Operations | prometheus, metric-type, total | [08](chapters/08-serving-observability/README.md) | "지금까지 몇 번 일어났는가"를 세는 metric type. 보통 계속 증가하며 요청 수, 에러 수, 생성 token 수에 사용 |
+| Gauge | 게이지 | Operations | prometheus, metric-type, current-value | [08](chapters/08-serving-observability/README.md) | "현재 얼마인가"를 나타내는 metric type. 증가하거나 감소할 수 있으며 in-flight 요청 수, GPU memory에 사용 |
+| Histogram | 히스토그램 | Operations | prometheus, metric-type, latency | [08](chapters/08-serving-observability/README.md) | 관측값을 정해진 bucket 구간에 누적하는 metric type. latency가 어느 구간에 많이 몰리는지 보고 p50/p95 같은 percentile 계산에 사용 |
+| Summary | 서머리, 요약 metric | Operations | prometheus, metric-type, quantile | [08](chapters/08-serving-observability/README.md) | application/client library 쪽에서 quantile이나 summary를 계산해 노출하는 metric type. 처음 latency 관측을 만들 때는 보통 Histogram부터 쓰는 편이 이해하기 쉽다. |
+| Label Cardinality | 라벨 카디널리티 | Operations | prometheus, labels, cardinality | [08](chapters/08-serving-observability/README.md) | metric label 값 조합의 수. Prometheus에서는 metric 이름과 label 조합마다 별도 time series가 생기므로, `user_id`나 request id처럼 값이 매우 많은 label을 넣으면 저장량, memory 사용량, query 비용이 급증한다. |
+| Grafana | 그라파나 | Operations | dashboard, visualization, grafana | [08](chapters/08-serving-observability/README.md) | Prometheus 같은 datasource를 query해 dashboard와 graph를 만드는 visualization tool |
+| Datasource | 데이터소스 | Operations | grafana, prometheus, datasource | [08](chapters/08-serving-observability/README.md) | Grafana가 query할 외부 데이터 저장소. 이 챕터에서는 Prometheus를 datasource로 사용 |
+| Dashboard Provisioning | 대시보드 프로비저닝 | Operations | grafana, dashboard, provisioning | [08](chapters/08-serving-observability/README.md) | Grafana datasource와 dashboard를 UI가 아니라 파일로 자동 등록하는 방식 |
+| DCGM Exporter | DCGM 익스포터 | GPU & Runtime | nvidia, dcgm, gpu-metrics | [08](chapters/08-serving-observability/README.md) | NVIDIA GPU telemetry를 Prometheus metric으로 노출하는 exporter |
+| Exporter | 익스포터 | Operations | prometheus, exporter, metrics | [08](chapters/08-serving-observability/README.md) | 어떤 시스템의 상태를 Prometheus가 scrape할 수 있는 `/metrics` 형태로 노출하는 component |
