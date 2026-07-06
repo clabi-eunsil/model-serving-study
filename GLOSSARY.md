@@ -197,3 +197,16 @@
 | Model Artifact | 모델 아티팩트 | Model Registry & Auth | model-files, artifact, cache | [06](chapters/06-nvidia-nim/README.md) | model weight, tokenizer, runtime profile, optimized engine처럼 모델 실행에 필요한 파일 묶음 |
 | Vendor-Provided Runtime | 벤더 제공 런타임 | Serving Engine | vendor, runtime, nim | [06](chapters/06-nvidia-nim/README.md) | NVIDIA 같은 vendor가 최적화와 패키징을 제공하는 serving runtime |
 | License Terms | 라이선스 조건 | Model Registry & Auth | license, terms, model-access | [06](chapters/06-nvidia-nim/README.md) | 모델/image를 사용할 때 따라야 하는 사용 조건. NIM 실행 전 NGC catalog에서 확인해야 한다. |
+| End-to-End Latency | 전체 지연 시간 | Performance | latency, client, response | [07](chapters/07-performance-methodology/README.md) | client가 요청을 보내기 시작한 시점부터 응답 전체를 받을 때까지 걸린 시간 |
+| Inter-Token Latency | 토큰 사이 지연 시간 | Performance | streaming, token, latency | [07](chapters/07-performance-methodology/README.md) | streaming 중 token 또는 chunk 사이의 시간 간격. 답변이 얼마나 부드럽게 이어지는지 볼 때 중요 |
+| Percentile Latency | 백분위 지연 시간 | Performance | p50, p95, p99 | [07](chapters/07-performance-methodology/README.md) | latency를 정렬했을 때 특정 위치의 값. 평균으로 놓치기 쉬운 느린 요청을 보기 위해 사용 |
+| p90 Latency | 90번째 percentile 지연 시간 | Performance | percentile, latency, p90 | [07](chapters/07-performance-methodology/README.md) | 요청 중 90%가 이 시간 이하로 끝났다는 의미의 latency 지표 |
+| p99 Latency | 99번째 percentile 지연 시간 | Performance | percentile, tail-latency, p99 | [07](chapters/07-performance-methodology/README.md) | 가장 느린 1%에 가까운 요청을 보는 tail latency 지표 |
+| Benchmark Workload | 벤치마크 부하 조건 | Performance | workload, benchmark, traffic | [07](chapters/07-performance-methodology/README.md) | benchmark에서 사용하는 요청 수, concurrency, prompt 길이, output 길이 같은 부하 조건 |
+| Experiment Matrix | 실험 조건표 | Performance | matrix, experiment, comparison | [07](chapters/07-performance-methodology/README.md) | 여러 workload 조건을 표처럼 정해 순서대로 실행하는 실험 설계 방식 |
+| Raw Result | 원본 결과 | Performance | csv, raw-data, benchmark | [07](chapters/07-performance-methodology/README.md) | 요청별 latency, status, error 같은 값을 그대로 저장한 결과. 요약값 이상 여부를 다시 확인할 때 필요 |
+| Load Testing Tool | 부하 테스트 도구 | Performance | wrk, hey, k6, locust | [07](chapters/07-performance-methodology/README.md) | server에 여러 요청을 보내 latency, throughput, error rate를 측정하는 도구 |
+| k6 | k6 부하 테스트 도구 | Performance | k6, load-test, metrics | [07](chapters/07-performance-methodology/README.md) | JavaScript로 scenario와 threshold를 정의할 수 있는 HTTP load testing 도구 |
+| Locust | Locust 부하 테스트 도구 | Performance | locust, python, load-test | [07](chapters/07-performance-methodology/README.md) | Python으로 사용자 행동 기반 load test를 작성하는 도구 |
+| hey | hey HTTP benchmark 도구 | Performance | hey, http, benchmark | [07](chapters/07-performance-methodology/README.md) | 단순 HTTP endpoint에 빠르게 부하를 주는 command line benchmark 도구 |
+| wrk | wrk HTTP benchmark 도구 | Performance | wrk, http, benchmark | [07](chapters/07-performance-methodology/README.md) | 높은 부하의 HTTP benchmark를 수행하는 command line 도구 |

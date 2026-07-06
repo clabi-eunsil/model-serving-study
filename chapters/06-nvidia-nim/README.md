@@ -81,19 +81,19 @@ LLM 같은 AI model을 container 형태로 배포하고 API로 호출할 수 있
 
 ### NGC Catalog
 
-NGC catalog는 NVIDIA가 제공하는 container image, model, resource를 찾는 곳이다.
+NGC catalog는 NVIDIA가 제공하는 container image, model, resource를 찾는 곳이다.  
 NIM image 이름, 지원 model, license, 실행 방법, 필요한 GPU 조건을 확인한다.
 
 ### NGC Container Registry
 
-NGC registry는 NIM container image를 pull하는 registry다.
-대개 `nvcr.io/...` 형태의 image를 사용한다.
+NGC registry는 NIM container image를 pull하는 registry다.  
+대개 `nvcr.io/...` 형태의 image를 사용한다.  
 private 또는 access-controlled image를 받을 수 있으므로 registry login이 필요하다.
 
 ### NGC API Key
 
-NGC API key는 NGC registry와 NIM container 실행에 필요한 인증 secret이다.
-script나 Git repo에 직접 저장하지 않는다.
+NGC API key는 NGC registry와 NIM container 실행에 필요한 인증 secret이다.  
+script나 Git repo에 직접 저장하지 않는다.  
 terminal session에서 환경변수로 설정해서 사용한다.
 
 ```bash
@@ -103,13 +103,13 @@ export NGC_API_KEY=...
 ### NIM Cache
 
 NIM container는 실행 중 model artifact나 optimized engine cache를 사용할 수 있다.
-container를 다시 실행할 때 cache를 재사용하려면 host directory를 container cache path에 mount한다.
-정확한 cache path와 권장 mount는 NIM model page와 공식 문서를 따른다.
+container를 다시 실행할 때 cache를 재사용하려면 host directory를 container cache path에 mount한다.  
+정확한 cache path와 권장 mount는 NIM model page와 공식 문서를 따른다.  
 
 ## NIM image와 모델 선택
 
-이 챕터의 script는 `NIM_IMAGE` 환경변수로 image를 받는다.
-문서에는 예시 기본값을 넣어두었지만, 실제 실습 전 반드시 NGC catalog에서 최신 image/tag와 license를 확인한다.
+이 챕터의 script는 `NIM_IMAGE` 환경변수로 image를 받는다.  
+문서에는 예시 기본값을 넣어두었지만, 실제 실습 전 반드시 NGC catalog에서 최신 image/tag와 license를 확인한다.  
 
 ```bash
 export NIM_IMAGE="nvcr.io/nim/meta/llama-3.1-8b-instruct:latest"

@@ -37,7 +37,7 @@ def main() -> None:
     print(response.choices[0].message.content)
     print(f"elapsed_seconds={elapsed:.3f}")
     if response.usage is not None:
-      print(f"usage={response.usage}")
+        print(f"usage={response.usage}")
 
 
 if __name__ == "__main__":
