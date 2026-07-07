@@ -36,7 +36,7 @@ Kubernetes 설치 방식, NVIDIA device plugin 버전, Ingress controller 구성
 12. [scripts/10_rolling_update.sh](scripts/10_rolling_update.sh)로 rolling update를 관찰한다.
 13. [templates/lab-notes.md](templates/lab-notes.md)를 보며 결과를 정리하고 [scripts/11_cleanup.sh](scripts/11_cleanup.sh)로 정리한다.
 
-## 이번 실습의 Kubernetes 선택
+## 이번 챕터에서 사용할 방식
 
 이번 챕터의 기본 실습은 **minikube + Docker driver + `kubectl apply -f`** 로 진행한다.
 
@@ -47,20 +47,32 @@ Kubernetes 설치 방식, NVIDIA device plugin 버전, Ingress controller 구성
 - GPU가 없어도 CPU Deployment 실습을 완료할 수 있다.
 - GPU 서버에서 minikube GPU 설정이 가능하면 같은 manifest에 GPU patch만 더해 실험할 수 있다.
 
-단, 실제 운영과 가장 가까운 선택은 managed Kubernetes다.
+단, 실제 운영과 가장 가까운 선택은 managed Kubernetes다.  
 운영 환경에서는 EKS, GKE, AKS 같은 managed Kubernetes 또는 사내 표준 cluster를 쓰고, 이 챕터의 manifest를 registry image와 cloud storage class에 맞게 바꾸는 편이 일반적이다.
+
+이번 실습에서는 **모델 서버 배포 방식**을 배우는 것이 목적이므로 cluster 구축 자체는 가장 단순한 minikube로 시작한다.  
+즉, 이 챕터에서 직접 깊게 다루는 것은 `Deployment`, `Service`, `PVC`, `Ingress`, `probe`, `GPU scheduling`이고, HA control plane이나 cloud load balancer 운영은 범위 밖이다.
+
+환경별로 바뀌는 지점은 아래처럼 생각하면 된다.
+
+| 환경 | 그대로 따라 해도 되는 것 | 바꿔야 하는 것 |
+| --- | --- | --- |
+| 로컬 minikube | script 순서, manifest 대부분, port-forward 호출 | host에 Docker/minikube/kubectl 설치 필요 |
+| GPU 서버 minikube | CPU 실습 흐름, GPU patch 실습 | NVIDIA driver/runtime, minikube GPU 설정, device plugin 확인 |
+| k3s 또는 kubeadm | manifest 구조, `kubectl apply -f`, Service/PVC/probe 개념 | image registry, StorageClass, Ingress controller, GPU runtime 설정 |
+| managed Kubernetes | Deployment/Service/PVC/probe/GPU request 개념 | cloud registry, cloud disk StorageClass, node group, IAM, LoadBalancer/Ingress 설정 |
 
 ## Kubernetes 구축 방식 비교
 
 | 방식 | 용도 | 장점 | 주의점 | 대략 필요한 리소스 |
 | --- | --- | --- | --- | --- |
-| Managed Kubernetes: EKS/GKE/AKS 등 | 운영, 팀 공용 dev/staging/prod | control plane 운영 부담이 작고 cloud LB, disk, IAM 연동이 좋다. | 비용, cloud 권한, node group/GPU quota, registry 구성이 필요하다. | control plane은 provider가 관리. worker는 최소 1-2 vCPU/2-4GB부터 가능하지만 모델 서빙은 모델 크기에 맞는 GPU node와 50GB+ disk를 권장한다. |
+| Managed Kubernetes | 운영, 팀 공용 dev/staging/prod | control plane 운영 부담이 작고 cloud LB, disk, IAM 연동이 좋다. | 비용, cloud 권한, node group/GPU quota, registry 구성이 필요하다. | control plane은 provider가 관리. worker는 최소 1-2 vCPU/2-4GB부터 가능하지만 모델 서빙은 모델 크기에 맞는 GPU node와 50GB+ disk를 권장한다. |
 | minikube | 개인 학습, 로컬 단일 노드 | 설치와 삭제가 쉽고 Kubernetes 기본 object 학습에 좋다. | 운영 HA가 아니며 node가 하나라 장애/스케줄링 실험이 제한된다. GPU passthrough는 host/driver/driver mode 영향을 받는다. | 공식 최소 기준은 2 CPU, 2GB memory, 20GB disk. 모델 서버 실습은 4 CPU, 8GB memory, 30GB+ disk를 권장한다. |
 | k3s | 가벼운 서버, edge, 작은 GPU lab | 단일 binary 기반으로 가볍고 VM/베어메탈에 설치하기 쉽다. | managed cloud 연동은 직접 구성해야 한다. storage, ingress, NVIDIA runtime 설정을 직접 점검해야 한다. | 공식 최소 기준은 server 2 core/2GB, agent 1 core/512MB. 모델 서빙은 server 2-4 core/4-8GB, GPU agent는 모델에 맞는 GPU memory와 SSD 권장. |
 | kubeadm 단일 control-plane | Kubernetes 표준 구성 학습, 사내 cluster 기초 | upstream Kubernetes 구성 요소를 직접 이해하기 좋다. | CNI, container runtime, 인증서, upgrade, LB 등을 직접 운영해야 한다. | control-plane 2 CPU/2GB 이상, worker 1-2 CPU/2GB 이상부터 가능. 모델 서빙은 GPU worker 별도 권장. |
 | kubeadm HA | 운영형 자체 구축, 온프레미스 | control plane 장애 대응을 직접 설계할 수 있다. | etcd quorum, LB, 인증서, upgrade, backup 운영 난이도가 높다. | control-plane 3대 이상 권장. 각 2-4 CPU/4-8GB 이상, etcd SSD 권장. GPU worker는 별도. |
 
-리소스 표는 "Kubernetes가 뜨는 최소 기준"과 "모델 서빙 실습이 편한 기준"이 다르다.
+리소스 표는 "Kubernetes가 뜨는 최소 기준"과 "모델 서빙 실습이 편한 기준"이 다르다.  
 작은 FastAPI 예제는 CPU cluster에서도 동작하지만, 실제 LLM은 model weight, KV cache, tokenizer cache 때문에 GPU memory와 disk 요구량이 훨씬 커진다.
 
 ## Helm vs kubectl apply
@@ -93,21 +105,30 @@ helm upgrade -i nvdp nvdp/nvidia-device-plugin \
   --create-namespace
 ```
 
-NVIDIA device plugin은 공식 문서에서 production 배포는 Helm을 권장하고, 간단한 static DaemonSet manifest도 제공한다.
+NVIDIA device plugin은 공식 문서에서 production 배포는 Helm을 권장하고, 간단한 static DaemonSet manifest도 제공한다.  
 그래서 이 챕터는 둘 다 보여주되, 기본값은 학습용으로 안전하게 명시적인 선택을 요구한다.
 
-## 배포 흐름 한 장 요약
+정리하면, **내가 만든 모델 서버**는 직접 YAML을 읽어 보며 `kubectl apply -f`로 배포한다.  
+반면 **다른 팀/벤더가 관리하는 Kubernetes add-on**은 Helm chart가 제공되면 Helm을 쓰는 편이 업그레이드와 설정 관리가 편하다.
 
-```text
-Docker image
-  -> Kubernetes Deployment
-      -> ReplicaSet
-          -> Pod
-              -> container: FastAPI model server
-              -> PVC mount: /root/.cache/huggingface
-  -> Service: stable cluster-internal endpoint
-  -> Ingress or port-forward: outside에서 호출
-```
+## 배포 흐름 요약
+
+![Kubernetes 모델 서버 배포 흐름](../../assets/diagrams/kubernetes-model-deployment-flow.svg)
+
+그림의 번호를 실습 명령과 연결하면 아래처럼 읽을 수 있다.
+
+| 번호 | 의미 | 관련 실습 |
+| --- | --- | --- |
+| 1 | Docker image를 만들고 cluster node가 사용할 수 있게 전달한다. | `scripts/03_build_and_load_image.sh` |
+| 2 | Deployment가 ReplicaSet을 만든다. | `manifests/20-deployment-cpu.yaml` |
+| 3 | ReplicaSet이 Pod 개수를 유지하고 Pod를 실행한다. | `scripts/05_wait_and_inspect.sh` |
+| 4 | Ingress controller가 있으면 Client 요청이 Ingress를 거쳐 들어올 수 있다. | `manifests/40-ingress.yaml` |
+| 5 | Ingress가 받은 요청을 Service로 보낸다. | `manifests/40-ingress.yaml`, `manifests/30-service.yaml` |
+| 6 | Ingress 없이도 port-forward로 Client가 Service에 직접 연결할 수 있다. | `scripts/06_port_forward.sh`, `scripts/07_curl_generate.sh` |
+| 7 | Service가 ready 상태인 Pod로 요청을 전달한다. | `manifests/30-service.yaml` |
+
+PVC와 GPU 조건은 번호가 붙은 요청 흐름이 아니라 **Pod에 붙는 설정**이다.
+PVC는 Pod가 `/root/.cache/huggingface`에 model cache를 보존하도록 mount되고, GPU 조건은 Pod spec에 `nvidia.com/gpu` request와 node 배치 조건을 붙여 GPU node에 뜰 수 있게 한다.
 
 ### Deployment
 
@@ -121,14 +142,16 @@ Deployment는 원하는 Pod replica 수와 update 전략을 선언한다.
 
 ### Service
 
-Pod IP는 재시작 때마다 바뀔 수 있다.
+Pod IP는 재시작 때마다 바뀔 수 있다.  
 Service는 label selector로 Pod들을 묶고 안정적인 DNS 이름과 virtual IP를 제공한다.
 
-이번 실습의 Service 이름은 `fastapi-model-server`다.
+이번 실습의 Service 이름은 `fastapi-model-server`다.  
 cluster 내부에서는 아래 주소로 접근할 수 있다.
 
 ```text
 http://fastapi-model-server.model-serving.svc.cluster.local
+
+# http://<service 명>.<namespace 명>.svc.cluster.local 로 생성됨
 ```
 
 외부에서 가장 단순하게 호출하려면 port-forward를 쓴다.
@@ -139,9 +162,9 @@ kubectl -n model-serving port-forward svc/fastapi-model-server 8000:8000
 
 ### Ingress
 
-Ingress는 HTTP host/path 기반 routing을 선언하는 object다.
-중요한 점은 Ingress object만 만든다고 traffic이 자동으로 들어오지 않는다는 것이다.
-cluster에는 nginx-ingress, cloud provider ingress controller, Traefik 같은 **Ingress controller**가 있어야 한다.
+Ingress는 HTTP host/path 기반 routing을 선언하는 object다.  
+중요한 점은 Ingress object만 만든다고 traffic이 자동으로 들어오지 않는다는 것이다.  
+cluster에는 nginx-ingress, cloud provider ingress controller, Traefik 같은 **Ingress controller**가 있어야 한다.  
 
 minikube에서는 아래처럼 addon을 켤 수 있다.
 
@@ -180,8 +203,8 @@ resources:
     nvidia.com/gpu: "1"
 ```
 
-GPU는 CPU/memory처럼 fractional request를 마음대로 나눠 쓰는 자원이 아니다.
-일반 device plugin 방식에서는 container가 정수 개수의 GPU를 요청한다.
+GPU는 CPU/memory처럼 fractional request를 마음대로 나눠 쓰는 자원이 아니다.  
+일반 device plugin 방식에서는 container가 정수 개수의 GPU를 요청한다.  
 MIG나 time-slicing은 별도 device plugin 설정과 node 구성이 필요하므로 이번 챕터에서는 개념만 언급한다.
 
 ### nodeSelector
@@ -203,7 +226,7 @@ nodeSelector:
 
 ### taints와 tolerations
 
-taint는 node 쪽의 "아무 Pod나 오지 마라" 설정이다.
+taint는 node 쪽의 "아무 Pod나 오지 마라" 설정이다.  
 toleration은 Pod 쪽의 "나는 그 taint를 견딜 수 있다" 설정이다.
 
 GPU node를 비싼 전용 자원으로 보호하려면 아래처럼 taint를 걸 수 있다.
@@ -225,7 +248,7 @@ tolerations:
 
 ## PVC로 model cache 관리
 
-모델 서버는 처음 뜰 때 model weight와 tokenizer file을 내려받거나 cache에서 읽는다.
+모델 서버는 처음 뜰 때 model weight와 tokenizer file을 내려받거나 cache에서 읽는다.  
 Pod filesystem만 쓰면 Pod가 새로 만들어질 때 cache가 사라질 수 있다.
 
 PVC를 쓰면 아래 장점이 있다.
@@ -234,9 +257,31 @@ PVC를 쓰면 아래 장점이 있다.
 - image 안에 model weight를 넣지 않아 image size를 줄인다.
 - rolling update 때 새 Pod가 같은 cache를 재사용할 수 있다.
 
-이번 실습에서는 `model-cache-pvc`를 `/root/.cache/huggingface`에 mount한다.
-단, ReadWriteOnce PVC는 보통 한 node에서만 쓰는 것을 전제로 한다.
+이번 실습에서는 `model-cache-pvc`를 `/root/.cache/huggingface`에 mount한다.  
+단, ReadWriteOnce PVC는 보통 한 node에서만 쓰는 것을 전제로 한다.  
 여러 replica가 동시에 같은 model cache를 써야 하면 storage backend의 access mode, file lock, read/write pattern을 따로 검토해야 한다.
+
+여기서 헷갈리기 쉬운 부분은 "같은 모델을 2개 띄운다"와 "같은 cache directory를 2개 Pod가 동시에 읽고 쓴다"가 다른 문제라는 점이다.
+
+| 상황 | 가능한 방식 | 주의점 |
+| --- | --- | --- |
+| replica 1개 | 지금처럼 RWO PVC 하나를 mount | 가장 단순하다. 이 챕터의 기본 실습 방식이다. |
+| replica 2개가 같은 node에만 뜬다 | RWO PVC가 같은 node에서 여러 Pod에 붙을 수 있는 storage라면 가능할 수 있다. | storage 구현마다 동작이 다를 수 있고, 동시에 model download/write가 일어나면 file lock 문제가 생길 수 있다. |
+| replica 2개가 서로 다른 node에 뜰 수 있다 | ReadWriteMany(RWX)를 지원하는 shared storage가 필요하다. 예: NFS, NAS, CephFS, EFS, Azure Files 등 | 여러 Pod가 같은 Hugging Face cache를 동시에 읽고 쓸 때 corruption이나 lock 충돌이 없는지 확인해야 한다. |
+| replica마다 독립 cache를 둔다 | PVC를 replica별로 따로 쓰거나, node local disk/cache를 쓴다. | storage는 단순하지만 같은 model weight가 여러 번 저장될 수 있다. 첫 기동 시간이 replica마다 발생할 수 있다. |
+| model weight를 image에 포함한다 | container image 안에 model을 bake한다. | image가 커지고 build/push/pull 시간이 길어진다. 모델 교체 때 image를 다시 만들어야 한다. |
+
+그래서 **서로 다른 node에 같은 모델 서버 replica 2개를 안정적으로 띄우고, 둘이 같은 Hugging Face cache를 공유하게 하고 싶다면** NAS/NFS 같은 RWX shared storage를 검토하는 것이 자연스러운 선택지다.  
+다만 "무조건 NAS가 필요하다"는 뜻은 아니다. 운영에서는 아래 중 하나를 고른다.
+
+- 작은 모델이나 replica 수가 적으면 replica마다 cache를 따로 둔다.
+- download 시간이 문제라면 init container나 사전 warmup job으로 각 PVC/cache를 미리 채운다.
+- 여러 node가 같은 cache를 공유해야 하면 RWX storage를 쓴다.
+- cloud managed Kubernetes에서는 EFS, Filestore, Azure Files 같은 managed shared filesystem을 쓴다.
+- vLLM/NIM처럼 큰 모델을 다룰 때는 cache 공유뿐 아니라 GPU memory, model loading time, node placement까지 함께 설계한다.
+
+중요한 실무 포인트는 **cache는 read가 대부분이면 공유하기 쉽지만, 여러 Pod가 동시에 같은 파일을 download/write하면 위험해질 수 있다**는 점이다.  
+따라서 shared cache를 쓸 때는 "이미 받아 둔 cache를 여러 Pod가 읽는 구조"로 만드는 편이 안전하다.
 
 ## Probe 설계
 
@@ -270,6 +315,20 @@ bash scripts/01_check_env.sh
 - `docker` 또는 `minikube`가 있는가?
 - 현재 context가 실습 cluster를 가리키는가?
 - GPU 실습이면 `nvidia-smi`가 동작하는가?
+
+도구가 없다면 1번 스크립트가 설치 문서와 예시 명령을 함께 출력한다.
+이 챕터의 기본 local 실습에는 `kubectl`, `docker`, `minikube`가 필요하고, Helm은 NVIDIA device plugin을 Helm 방식으로 설치할 때만 필요하다.
+
+Ubuntu/WSL에서 minikube가 없다면 공식 문서 기준으로 아래 흐름을 사용할 수 있다.
+
+```bash
+curl -LO https://storage.googleapis.com/minikube/releases/latest/minikube-linux-amd64
+sudo install minikube-linux-amd64 /usr/local/bin/minikube
+rm minikube-linux-amd64
+minikube version
+```
+
+Windows + WSL2에서 Docker driver를 쓸 때는 Docker Desktop이 실행 중이고, Docker Desktop의 WSL integration이 켜져 있어야 한다.
 
 ### 2. minikube cluster 만들기
 
@@ -313,6 +372,13 @@ IMAGE=ghcr.io/my-org/model-serving-fastapi:chapter-10 \
 bash scripts/04_apply_cpu_manifests.sh
 bash scripts/05_wait_and_inspect.sh
 ```
+
+정상적으로 배포되면 Deployment, Pod, PVC, Service, Ingress가 아래처럼 보인다.
+
+![minikube 정상 출력 예시](../../assets/external/minikube/정상출력.png)
+
+특히 먼저 볼 값은 `deployment.apps/fastapi-model-server`의 `READY 1/1`, Pod의 `STATUS Running`, PVC의 `STATUS Bound`, Service endpoint의 Pod IP다.
+초기 event에 `Startup probe failed`가 한두 번 보여도 최종적으로 Pod가 `READY 1/1`이면 정상적으로 회복된 상태다.
 
 주요 object:
 
