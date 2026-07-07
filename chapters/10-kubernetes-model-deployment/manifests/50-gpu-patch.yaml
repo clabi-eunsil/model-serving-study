@@ -1,0 +1,39 @@
+# 이 파일은 완전한 Kubernetes object가 아니라 `kubectl patch`에 넘기는 patch 조각이다.
+# scripts/09_apply_gpu_patch.sh가 기존 Deployment에 아래 설정을 덧붙인다.
+#
+# 목적:
+# - GPU가 있는 node에만 Pod를 배치한다.
+# - GPU node에 taint가 있어도 이 Pod는 schedule될 수 있게 toleration을 추가한다.
+# - NVIDIA device plugin이 노출한 nvidia.com/gpu resource를 1개 요청한다.
+spec:
+  template:
+    spec:
+      # nodeSelector는 특정 label을 가진 node에만 Pod를 배치하게 한다.
+      # 먼저 GPU node에 아래처럼 label을 붙여야 한다.
+      # kubectl label node <GPU_NODE_NAME> accelerator=nvidia
+      nodeSelector:
+        accelerator: nvidia
+      # taint가 걸린 node에는 기본적으로 Pod가 배치되지 않는다.
+      # GPU node를 전용 자원으로 보호하기 위해 nvidia.com/gpu taint를 걸었다면,
+      # GPU workload Pod에는 그 taint를 허용하는 toleration이 필요하다.
+      tolerations:
+        - key: nvidia.com/gpu
+          # Exists는 value가 무엇이든 key가 있으면 허용한다는 뜻이다.
+          operator: Exists
+          effect: NoSchedule
+      containers:
+        # strategic merge patch에서는 name이 같은 container를 찾아 아래 fields를 병합한다.
+        # Deployment 원본의 container name과 반드시 일치해야 한다.
+        - name: model-server
+          resources:
+            requests:
+              # GPU workload는 CPU/memory도 충분히 잡아야 한다.
+              # GPU만 요청하고 CPU/memory를 너무 낮게 두면 tokenizer, preprocessing, API 처리에서 병목이 난다.
+              cpu: "1"
+              memory: "2Gi"
+            limits:
+              cpu: "4"
+              memory: "8Gi"
+              # NVIDIA device plugin이 설치되어 있어야 node allocatable에 이 resource가 나타난다.
+              # GPU가 없는 cluster에서 이 값을 요청하면 Pod는 Pending 상태가 된다.
+              nvidia.com/gpu: "1"

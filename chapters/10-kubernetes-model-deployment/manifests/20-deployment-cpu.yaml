@@ -1,0 +1,108 @@
+# Deployment는 "이런 Pod를 몇 개 유지하고, 업데이트는 어떻게 할지"를 선언한다.
+# 직접 Pod를 만들면 Pod가 죽었을 때 자동 복구나 rolling update를 얻기 어렵다.
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: fastapi-model-server
+  namespace: model-serving
+  labels:
+    # Service selector와 맞춰서 이 Deployment가 만든 Pod를 찾는 데 사용한다.
+    app: fastapi-model-server
+spec:
+  # 모델 서버 Pod 개수다. 이 챕터에서는 PVC와 GPU 개념을 단순하게 보기 위해 1개로 시작한다.
+  replicas: 1
+  # rollout history를 몇 개까지 남길지 정한다.
+  # rollback 실습에서 이전 revision을 확인할 수 있다.
+  revisionHistoryLimit: 5
+  strategy:
+    # RollingUpdate는 새 Pod를 준비한 뒤 기존 Pod를 순차적으로 교체한다.
+    type: RollingUpdate
+    rollingUpdate:
+      # 업데이트 중 desired replica보다 1개 더 Pod를 만들 수 있다.
+      # maxUnavailable: 0과 함께 쓰면 새 Pod가 ready 되기 전 기존 Pod를 내리지 않는다.
+      maxSurge: 1
+      # 업데이트 중 사용 불가능한 Pod를 0개로 유지한다.
+      # readiness probe가 제대로 설계되어 있어야 의미가 있다.
+      maxUnavailable: 0
+  selector:
+    matchLabels:
+      # Deployment가 관리할 Pod를 고르는 selector다.
+      # template.metadata.labels와 반드시 맞아야 한다.
+      app: fastapi-model-server
+  template:
+    metadata:
+      labels:
+        # Service도 이 label을 보고 traffic을 보낼 Pod를 찾는다.
+        app: fastapi-model-server
+    spec:
+      containers:
+        - name: model-server
+          # 챕터 3의 FastAPI model server image를 재사용한다.
+          # minikube 실습에서는 scripts/03_build_and_load_image.sh로 이 image를 cluster에 load한다.
+          image: model-serving-fastapi:chapter-10
+          # local/minikube image를 우선 사용한다.
+          # managed Kubernetes에서는 registry image를 쓰고 Always 또는 IfNotPresent를 상황에 맞게 고른다.
+          imagePullPolicy: IfNotPresent
+          ports:
+            - name: http
+              # FastAPI/uvicorn이 container 안에서 listen하는 port다.
+              containerPort: 8000
+          env:
+            - name: MODEL_NAME
+              # 실습용 작은 public model이다.
+              # 큰 LLM으로 바꾸면 resource, startupProbe, PVC 크기를 함께 조정해야 한다.
+              value: sshleifer/tiny-gpt2
+            - name: HF_HOME
+              # Hugging Face cache 위치를 PVC mount path와 맞춘다.
+              # Pod가 재시작되어도 model/tokenizer cache를 재사용하기 위한 설정이다.
+              value: /root/.cache/huggingface
+          resources:
+            requests:
+              # request는 scheduler가 node 배치를 계산할 때 보는 최소 예약량이다.
+              # 너무 낮게 잡으면 한 node에 과도하게 배치될 수 있다.
+              cpu: "500m"
+              memory: "1Gi"
+            limits:
+              # limit은 container가 사용할 수 있는 상한이다.
+              # CPU는 throttling될 수 있고, memory는 초과하면 OOMKilled될 수 있다.
+              cpu: "2"
+              memory: "4Gi"
+          volumeMounts:
+            - name: model-cache
+              # HF_HOME과 같은 path에 PVC를 mount한다.
+              # model download 결과가 container ephemeral filesystem이 아니라 PVC에 남는다.
+              mountPath: /root/.cache/huggingface
+          startupProbe:
+            # startupProbe는 "느린 시작"을 허용하기 위한 probe다.
+            # 모델 다운로드와 로딩이 끝나기 전 livenessProbe가 성급하게 재시작하지 않도록 보호한다.
+            httpGet:
+              path: /health
+              port: http
+            # 60번 * 5초 = 최대 300초까지 startup을 기다린다.
+            failureThreshold: 60
+            periodSeconds: 5
+          readinessProbe:
+            # readinessProbe가 실패하면 Pod는 살아 있어도 Service endpoint에서 제외된다.
+            # 모델이 아직 load되지 않았거나 traffic을 받을 준비가 안 되었을 때 유용하다.
+            httpGet:
+              path: /health
+              port: http
+            initialDelaySeconds: 5
+            periodSeconds: 10
+            timeoutSeconds: 3
+            failureThreshold: 3
+          livenessProbe:
+            # livenessProbe가 계속 실패하면 kubelet이 container를 재시작한다.
+            # 모델 서버에서는 긴 inference나 일시적 부하 때문에 오탐하지 않도록 readiness보다 느슨하게 둔다.
+            httpGet:
+              path: /health
+              port: http
+            initialDelaySeconds: 30
+            periodSeconds: 20
+            timeoutSeconds: 5
+            failureThreshold: 3
+      volumes:
+        - name: model-cache
+          persistentVolumeClaim:
+            # 위에서 만든 PVC를 이 Pod에 volume으로 연결한다.
+            claimName: model-cache-pvc

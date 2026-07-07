@@ -1,0 +1,32 @@
+# Ingress는 HTTP host/path routing 규칙을 선언하는 object다.
+# 주의: Ingress object만으로는 동작하지 않는다.
+# cluster 안에 nginx-ingress, Traefik, cloud LB controller 같은 Ingress controller가 있어야 한다.
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: fastapi-model-server
+  namespace: model-serving
+  annotations:
+    # 모델 응답은 일반 웹 API보다 오래 걸릴 수 있으므로 nginx timeout을 넉넉하게 둔다.
+    # 사용하는 Ingress controller가 nginx가 아니면 이 annotation은 무시될 수 있다.
+    nginx.ingress.kubernetes.io/proxy-read-timeout: "300"
+    nginx.ingress.kubernetes.io/proxy-send-timeout: "300"
+spec:
+  # minikube ingress addon이나 ingress-nginx를 쓸 때 흔히 사용하는 class 이름이다.
+  # cluster마다 ingressClassName은 다를 수 있으니 kubectl get ingressclass로 확인한다.
+  ingressClassName: nginx
+  rules:
+    # 로컬 실습에서는 /etc/hosts에 model-serving.local을 minikube IP로 매핑해야 할 수 있다.
+    - host: model-serving.local
+      http:
+        paths:
+          - path: /
+            # Prefix는 /generate, /health처럼 / 아래 모든 path를 Service로 보낸다.
+            pathType: Prefix
+            backend:
+              service:
+                # traffic을 받을 Service 이름이다.
+                name: fastapi-model-server
+                port:
+                  # Service의 ports[].name과 맞춘다.
+                  name: http

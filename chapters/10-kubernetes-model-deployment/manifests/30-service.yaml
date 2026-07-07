@@ -1,0 +1,25 @@
+# Service는 바뀔 수 있는 Pod IP 앞에 안정적인 endpoint를 제공한다.
+# Deployment가 Pod를 새로 만들면 Pod IP는 바뀔 수 있지만,
+# Service DNS 이름은 그대로 유지된다.
+apiVersion: v1
+kind: Service
+metadata:
+  name: fastapi-model-server
+  namespace: model-serving
+  labels:
+    app: fastapi-model-server
+spec:
+  # ClusterIP는 cluster 내부에서만 접근 가능한 기본 Service type이다.
+  # 외부 호출은 port-forward, Ingress, LoadBalancer 중 하나를 추가로 사용한다.
+  type: ClusterIP
+  selector:
+    # 이 label을 가진 Pod로 traffic을 보낸다.
+    # Deployment의 template.metadata.labels와 맞아야 endpoint가 생긴다.
+    app: fastapi-model-server
+  ports:
+    - name: http
+      # Service가 노출하는 port다.
+      port: 8000
+      # Pod container port 이름을 참조한다.
+      # 숫자 8000을 직접 써도 되지만, 이름을 쓰면 containerPort 변경 시 의도가 더 분명하다.
+      targetPort: http
