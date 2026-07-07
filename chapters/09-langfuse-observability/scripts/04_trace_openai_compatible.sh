@@ -7,10 +7,23 @@ set -euo pipefail
 # 실제 endpoint와 Langfuse로 보내려면:
 #   DRY_RUN=false bash scripts/04_trace_openai_compatible.sh
 
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+CHAPTER_DIR="$(cd "${SCRIPT_DIR}/.." && pwd)"
+
+if [[ -f "${CHAPTER_DIR}/.env" ]]; then
+  set -a
+  # shellcheck disable=SC1091
+  source "${CHAPTER_DIR}/.env"
+  set +a
+fi
+
 DRY_RUN="${DRY_RUN:-true}"
+PYTHON_BIN="${PYTHON_BIN:-python3}"
+
+cd "${CHAPTER_DIR}"
 
 if [[ "${DRY_RUN}" == "true" ]]; then
-  python client/04_trace_openai_compatible.py --dry-run
+  "${PYTHON_BIN}" client/04_trace_openai_compatible.py --dry-run
 else
-  python client/04_trace_openai_compatible.py
+  "${PYTHON_BIN}" client/04_trace_openai_compatible.py
 fi

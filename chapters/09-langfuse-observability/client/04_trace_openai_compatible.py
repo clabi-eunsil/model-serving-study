@@ -101,33 +101,43 @@ def print_dry_run(messages: list[dict[str, str]], result: dict[str, Any], latenc
 
 
 def send_trace(messages: list[dict[str, str]], result: dict[str, Any], latency_ms: float) -> None:
-    from langfuse import get_client
+    if os.getenv("LANGFUSE_HOST") and not os.getenv("LANGFUSE_BASE_URL"):
+        os.environ["LANGFUSE_BASE_URL"] = os.environ["LANGFUSE_HOST"]
+
+    from langfuse import get_client, propagate_attributes
 
     langfuse = get_client()
+    trace_name = os.getenv("TRACE_NAME", "chapter-09-openai-compatible-call")
+    session_id = os.getenv("SESSION_ID", "study-session-openai-compatible")
+    user_id = os.getenv("USER_ID", "study-user-local")
 
-    with langfuse.start_as_current_observation(
-        as_type="generation",
-        name="openai-compatible-chat",
-        model=result["model"],
-        input=messages,
-        output=result["content"],
-        model_parameters={
-            "temperature": 0.2,
-            "max_tokens": 128,
-        },
-        usage_details=result["usage"],
+    with propagate_attributes(
+        trace_name=trace_name,
+        session_id=session_id,
+        user_id=user_id,
+        tags=["model-serving-study", "openai-compatible"],
         metadata={
-            "base_url": os.getenv("OPENAI_BASE_URL", "http://127.0.0.1:8000/v1"),
-            "latency_ms": latency_ms,
             "chapter": "09-langfuse-observability",
         },
-    ) as generation:
-        generation.update_trace(
-            name="chapter-09-openai-compatible-call",
-            session_id="study-session-openai-compatible",
-            user_id="study-user-local",
-            tags=["model-serving-study", "openai-compatible"],
-        )
+    ):
+        with langfuse.start_as_current_observation(
+            as_type="generation",
+            name="openai-compatible-chat",
+            model=result["model"],
+            input=messages,
+            output=result["content"],
+            model_parameters={
+                "temperature": 0.2,
+                "max_tokens": 128,
+            },
+            usage_details=result["usage"],
+            metadata={
+                "base_url": os.getenv("OPENAI_BASE_URL", "http://127.0.0.1:8000/v1"),
+                "latency_ms": latency_ms,
+                "chapter": "09-langfuse-observability",
+            },
+        ):
+            pass
 
     langfuse.flush()
     print("OpenAI-compatible call traced to Langfuse.")

@@ -7,6 +7,23 @@ set -euo pipefail
 # Python script는 Langfuse SDK와 OpenAI SDK를 사용한다.
 # 이 스크립트는 "지금 바로 trace를 보낼 준비가 됐는지"를 빠르게 점검한다.
 
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+CHAPTER_DIR="$(cd "${SCRIPT_DIR}/.." && pwd)"
+
+# 사용자가 `.env.example`을 복사해 `.env`에 key를 넣었다면,
+# shell에 직접 export하지 않아도 이 스크립트가 먼저 읽어 온다.
+# 주의: `.env`는 shell 문법 형태(KEY=value)여야 한다.
+if [[ -f "${CHAPTER_DIR}/.env" ]]; then
+  set -a
+  # shellcheck disable=SC1091
+  source "${CHAPTER_DIR}/.env"
+  set +a
+  echo "Loaded .env from ${CHAPTER_DIR}/.env"
+else
+  echo "No .env file found. Dry-run is still available."
+fi
+
+echo
 echo "## Python"
 python3 --version
 
@@ -38,7 +55,8 @@ else
   echo "LANGFUSE_SECRET_KEY: not set"
 fi
 
-echo "LANGFUSE_HOST=${LANGFUSE_HOST:-not set}"
+echo "LANGFUSE_BASE_URL=${LANGFUSE_BASE_URL:-not set}"
+echo "LANGFUSE_HOST=${LANGFUSE_HOST:-not set} (legacy/fallback)"
 
 echo
 echo "## OpenAI-compatible endpoint variables"

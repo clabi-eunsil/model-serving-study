@@ -8,14 +8,14 @@ set -euo pipefail
 cat <<'EOF'
 ## Python SDK environment for self-hosted Langfuse
 
-export LANGFUSE_HOST=http://localhost:3000
+export LANGFUSE_BASE_URL=http://localhost:3000
 export LANGFUSE_PUBLIC_KEY=pk-lf-...
 export LANGFUSE_SECRET_KEY=sk-lf-...
 
 확인:
   DRY_RUN=false bash scripts/02_send_trace.sh
 
-폐쇄망에서는 LANGFUSE_HOST가 내부망 주소가 될 수 있다.
+폐쇄망에서는 LANGFUSE_BASE_URL이 내부망 주소가 될 수 있다.
 예:
-  export LANGFUSE_HOST=http://langfuse.internal.example:3000
+  export LANGFUSE_BASE_URL=http://langfuse.internal.example:3000
 EOF

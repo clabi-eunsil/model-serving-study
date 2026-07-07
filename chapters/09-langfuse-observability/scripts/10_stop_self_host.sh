@@ -7,6 +7,7 @@ set -euo pipefail
 # 데이터까지 지우려면 REMOVE_VOLUMES=true로 실행한다.
 
 SELF_HOST_DIR="${SELF_HOST_DIR:-self-host/langfuse-official}"
+ENV_FILE="${SELF_HOST_DIR}/.env"
 REMOVE_VOLUMES="${REMOVE_VOLUMES:-false}"
 
 if [[ ! -f "${SELF_HOST_DIR}/docker-compose.yml" ]]; then
@@ -14,8 +15,14 @@ if [[ ! -f "${SELF_HOST_DIR}/docker-compose.yml" ]]; then
   exit 1
 fi
 
-if [[ "${REMOVE_VOLUMES}" == "true" ]]; then
-  docker compose -f "${SELF_HOST_DIR}/docker-compose.yml" down -v
+if [[ -f "${ENV_FILE}" ]]; then
+  COMPOSE_CMD=(docker compose --env-file "${ENV_FILE}" -f "${SELF_HOST_DIR}/docker-compose.yml")
 else
-  docker compose -f "${SELF_HOST_DIR}/docker-compose.yml" down
+  COMPOSE_CMD=(docker compose -f "${SELF_HOST_DIR}/docker-compose.yml")
+fi
+
+if [[ "${REMOVE_VOLUMES}" == "true" ]]; then
+  "${COMPOSE_CMD[@]}" down -v
+else
+  "${COMPOSE_CMD[@]}" down
 fi

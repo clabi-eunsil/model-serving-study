@@ -1,0 +1,153 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1440" height="920" viewBox="0 0 1440 920" role="img" aria-labelledby="title desc">
+  <title id="title">Langfuse self-host architecture</title>
+  <desc id="desc">A clear Langfuse self-host architecture diagram. Numbered arrows show the main ingestion path and auxiliary relationships without overlapping component labels.</desc>
+  <style>
+    .bg { fill: #f8fafc; }
+    .panel { fill: #ffffff; stroke: #cbd5e1; stroke-width: 1.4; rx: 8; }
+    .client { fill: #e8f4ff; stroke: #5f92c8; stroke-width: 1.5; rx: 8; }
+    .app { fill: #fff2d8; stroke: #d28b28; stroke-width: 1.5; rx: 8; }
+    .storage { fill: #eaf7ee; stroke: #62a875; stroke-width: 1.5; rx: 8; }
+    .queue { fill: #f1ecff; stroke: #8b70c7; stroke-width: 1.5; rx: 8; }
+    .optional { fill: #fef2f2; stroke: #d56b6b; stroke-width: 1.5; rx: 8; }
+    .legend { fill: #ffffff; stroke: #cbd5e1; stroke-width: 1.2; rx: 8; }
+    .title { font: 700 30px system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; fill: #111827; }
+    .subtitle { font: 400 16px system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; fill: #4b5563; }
+    .group { font: 700 15px system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; fill: #334155; }
+    .label { font: 700 18px system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; fill: #111827; text-anchor: middle; }
+    .small { font: 400 13px system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; fill: #475569; text-anchor: middle; }
+    .tiny { font: 400 12px system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; fill: #64748b; }
+    .legend-title { font: 700 14px system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; fill: #111827; }
+    .legend-text { font: 400 13px system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; fill: #334155; }
+    .badge { fill: #ffffff; stroke: #475569; stroke-width: 1.6; }
+    .badge-aux { fill: #ffffff; stroke: #8b97a8; stroke-width: 1.6; }
+    .badge-text { font: 700 12px system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; fill: #334155; text-anchor: middle; dominant-baseline: central; }
+    .main-flow { stroke: #475569; stroke-width: 2.5; fill: none; marker-end: url(#arrow-main); }
+    .aux-flow { stroke: #8b97a8; stroke-width: 2; stroke-dasharray: 6 6; fill: none; marker-end: url(#arrow-aux); }
+  </style>
+  <defs>
+    <marker id="arrow-main" markerWidth="10" markerHeight="10" refX="8" refY="3" orient="auto" markerUnits="strokeWidth">
+      <path d="M0,0 L0,6 L9,3 z" fill="#475569" />
+    </marker>
+    <marker id="arrow-aux" markerWidth="10" markerHeight="10" refX="8" refY="3" orient="auto" markerUnits="strokeWidth">
+      <path d="M0,0 L0,6 L9,3 z" fill="#8b97a8" />
+    </marker>
+  </defs>
+
+  <rect class="bg" width="1440" height="920" />
+  <text class="title" x="56" y="58">Langfuse self-host 구조를 한 장으로 보기</text>
+  <text class="subtitle" x="56" y="88">그림 안에서는 선과 글자가 겹치지 않도록 번호만 표시하고, 상세 설명은 아래 표에서 확인한다.</text>
+
+  <rect class="panel" x="44" y="124" width="280" height="540" />
+  <text class="group" x="72" y="154">내 애플리케이션 영역</text>
+
+  <rect class="client" x="78" y="196" width="212" height="92" />
+  <text class="label" x="184" y="229">LLM 앱</text>
+  <text class="small" x="184" y="255">FastAPI, chatbot, agent</text>
+  <text class="small" x="184" y="274">사용자 요청 처리</text>
+
+  <rect class="client" x="78" y="350" width="212" height="92" />
+  <text class="label" x="184" y="383">Langfuse SDK</text>
+  <text class="small" x="184" y="409">trace, span, generation</text>
+  <text class="small" x="184" y="428">LANGFUSE_HOST로 전송</text>
+
+  <rect class="optional" x="78" y="522" width="212" height="92" />
+  <text class="label" x="184" y="555">모델 서버</text>
+  <text class="small" x="184" y="581">vLLM, NIM, OpenAI API</text>
+  <text class="small" x="184" y="600">LLM 응답 생성</text>
+
+  <rect class="panel" x="382" y="124" width="330" height="540" />
+  <text class="group" x="410" y="154">Langfuse application containers</text>
+
+  <rect class="app" x="430" y="230" width="236" height="100" />
+  <text class="label" x="548" y="263">Langfuse Web</text>
+  <text class="small" x="548" y="289">UI와 API 제공</text>
+  <text class="small" x="548" y="308">trace ingest, project 설정</text>
+
+  <rect class="app" x="430" y="516" width="236" height="100" />
+  <text class="label" x="548" y="549">Langfuse Worker</text>
+  <text class="small" x="548" y="575">event 비동기 처리</text>
+  <text class="small" x="548" y="594">queue consume, ingestion</text>
+
+  <rect class="panel" x="780" y="124" width="610" height="540" />
+  <text class="group" x="810" y="154">Storage / cache components</text>
+
+  <rect class="storage" x="824" y="178" width="214" height="88" />
+  <text class="label" x="931" y="211">Postgres</text>
+  <text class="small" x="931" y="237">project, user, 설정</text>
+  <text class="small" x="931" y="256">transactional data</text>
+
+  <rect class="storage" x="1136" y="258" width="214" height="88" />
+  <text class="label" x="1243" y="291">S3/Blob Store</text>
+  <text class="small" x="1243" y="317">incoming event 저장</text>
+  <text class="small" x="1243" y="336">local compose는 MinIO</text>
+
+  <rect class="queue" x="1136" y="400" width="214" height="88" />
+  <text class="label" x="1243" y="433">Redis/Valkey</text>
+  <text class="small" x="1243" y="459">queue와 cache</text>
+  <text class="small" x="1243" y="478">API key, prompt cache</text>
+
+  <rect class="storage" x="824" y="548" width="214" height="88" />
+  <text class="label" x="931" y="581">ClickHouse</text>
+  <text class="small" x="931" y="607">trace 분석 데이터</text>
+  <text class="small" x="931" y="626">OLAP, dashboard query</text>
+
+  <rect class="optional" x="1136" y="548" width="214" height="88" />
+  <text class="label" x="1243" y="581">LLM Gateway</text>
+  <text class="small" x="1243" y="607">일부 기능에서 선택</text>
+  <text class="small" x="1243" y="626">외부 LLM API 연결</text>
+
+  <!-- Main ingestion path. -->
+  <path class="main-flow" d="M184 288 L184 350" />
+  <circle class="badge" cx="184" cy="319" r="12" />
+  <text class="badge-text" x="184" y="319">1</text>
+
+  <path class="main-flow" d="M290 396 L360 396 L360 280 L430 280" />
+  <circle class="badge" cx="360" cy="396" r="12" />
+  <text class="badge-text" x="360" y="396">2</text>
+
+  <path class="main-flow" d="M666 292 L748 292 L748 302 L1136 302" />
+  <circle class="badge" cx="748" cy="292" r="12" />
+  <text class="badge-text" x="748" y="292">3</text>
+
+  <path class="main-flow" d="M1243 346 L1243 400" />
+  <circle class="badge" cx="1243" cy="373" r="12" />
+  <text class="badge-text" x="1243" y="373">4</text>
+
+  <path class="main-flow" d="M1136 444 L748 444 L748 566 L666 566" />
+  <circle class="badge" cx="748" cy="444" r="12" />
+  <text class="badge-text" x="748" y="444">5</text>
+
+  <path class="main-flow" d="M666 592 L748 592 L748 592 L824 592" />
+  <circle class="badge" cx="748" cy="592" r="12" />
+  <text class="badge-text" x="748" y="592">6</text>
+
+  <!-- Auxiliary relationships. Each auxiliary line has a separate lane. -->
+  <path class="aux-flow" d="M666 250 L748 250 L748 222 L824 222" />
+  <circle class="badge-aux" cx="748" cy="250" r="12" />
+  <text class="badge-text" x="748" y="250">A</text>
+
+  <path class="aux-flow" d="M666 326 L732 326 L732 462 L1136 462" />
+  <circle class="badge-aux" cx="732" cy="326" r="12" />
+  <text class="badge-text" x="732" y="326">B</text>
+
+  <path class="aux-flow" d="M184 522 L184 442" />
+  <circle class="badge-aux" cx="184" cy="482" r="12" />
+  <text class="badge-text" x="184" y="482">C</text>
+
+  <path class="aux-flow" d="M666 330 L712 330 L712 690 L1243 690 L1243 636" />
+  <circle class="badge-aux" cx="712" cy="330" r="12" />
+  <text class="badge-text" x="712" y="330">D</text>
+
+  <rect class="legend" x="44" y="700" width="1346" height="168" />
+  <text class="legend-title" x="70" y="730">번호별 흐름</text>
+  <text class="legend-text" x="70" y="758">1. LLM 앱 -> Langfuse SDK: trace, span, generation을 코드에서 만든다.</text>
+  <text class="legend-text" x="70" y="782">2. SDK -> Langfuse Web: LANGFUSE_HOST 주소로 trace를 전송한다.</text>
+  <text class="legend-text" x="70" y="806">3. Web -> S3/Blob Store: 들어온 event를 먼저 object storage에 저장한다.</text>
+  <text class="legend-text" x="70" y="830">4. S3/Blob Store -> Redis/Valkey: worker가 처리할 수 있도록 queue reference를 둔다.</text>
+  <text class="legend-text" x="720" y="758">5. Redis/Valkey -> Worker: worker가 queue를 소비하며 event를 처리한다.</text>
+  <text class="legend-text" x="720" y="782">6. Worker -> ClickHouse: trace 분석용 데이터를 적재한다.</text>
+  <text class="legend-text" x="720" y="806">A. Web -> Postgres: project, user, API key 같은 설정 정보를 조회/저장한다.</text>
+  <text class="legend-text" x="720" y="830">B. Web -> Redis/Valkey: API key, prompt 같은 cache를 조회한다.</text>
+  <text class="legend-text" x="720" y="854">C. 모델 서버 응답은 앱에서 generation으로 기록된다. D. Web -> LLM Gateway는 선택 기능이다.</text>
+  <text class="tiny" x="70" y="892">실선: 주요 수집 흐름 / 점선: 보조 관계. 공식 self-host architecture를 학습용으로 재구성했다.</text>
+</svg>

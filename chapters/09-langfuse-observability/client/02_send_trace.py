@@ -17,7 +17,19 @@ import time
 from dataclasses import dataclass
 from typing import Any
 
-from dotenv import load_dotenv
+try:
+    from dotenv import load_dotenv
+except ImportError:
+    # dry-run은 Langfuse나 dotenv package가 없어도 trace 모양을 볼 수 있어야 한다.
+    # 챕터 실습처럼 `pip install -r requirements.txt`를 실행하면 실제 load_dotenv가 쓰인다.
+    def load_dotenv() -> bool:
+        return False
+
+
+DEFAULT_TRACE_NAME = "chapter-09-first-trace"
+DEFAULT_SESSION_ID = "study-session-001"
+DEFAULT_USER_ID = "study-user-local"
+DEFAULT_MODEL_NAME = "fake-observability-model"
 
 
 @dataclass
@@ -75,13 +87,18 @@ def run_dry_run(prompt: str) -> None:
     """Langfuse key가 없을 때도 trace 구조를 눈으로 확인하는 경로."""
 
     result = fake_llm_call(prompt)
+    trace_name = os.getenv("TRACE_NAME", DEFAULT_TRACE_NAME)
+    session_id = os.getenv("SESSION_ID", DEFAULT_SESSION_ID)
+    user_id = os.getenv("USER_ID", DEFAULT_USER_ID)
+    model_name = os.getenv("MODEL_NAME", DEFAULT_MODEL_NAME)
 
     print("## Dry-run trace preview")
-    print("trace name: chapter-09-first-trace")
-    print("session_id: study-session-001")
-    print("user_id: study-user-local")
+    print(f"trace name: {trace_name}")
+    print(f"session_id: {session_id}")
+    print(f"user_id: {user_id}")
     print("span: prepare-request")
     print("generation: fake-llm-call")
+    print(f"model: {model_name}")
     print(f"input: {prompt}")
     print(f"output: {result.output}")
     print(f"latency_ms: {result.latency_ms}")
@@ -100,69 +117,82 @@ def send_langfuse_trace(prompt: str) -> None:
     LLM 전용 필드를 함께 기록할 수 있다.
     """
 
-    from langfuse import get_client
+    # Langfuse 최신 문서는 LANGFUSE_BASE_URL을 사용한다.
+    # 기존 예제나 내부 환경에서 LANGFUSE_HOST를 쓰는 경우도 있어서,
+    # HOST만 설정되어 있으면 BASE_URL로 복사해 최신 SDK가 읽을 수 있게 한다.
+    if os.getenv("LANGFUSE_HOST") and not os.getenv("LANGFUSE_BASE_URL"):
+        os.environ["LANGFUSE_BASE_URL"] = os.environ["LANGFUSE_HOST"]
+
+    from langfuse import get_client, propagate_attributes
 
     langfuse = get_client()
+    trace_name = os.getenv("TRACE_NAME", DEFAULT_TRACE_NAME)
+    session_id = os.getenv("SESSION_ID", DEFAULT_SESSION_ID)
+    user_id = os.getenv("USER_ID", DEFAULT_USER_ID)
+    model_name = os.getenv("MODEL_NAME", DEFAULT_MODEL_NAME)
 
-    # trace-level metadata는 "이 요청이 어떤 사용자/세션/실험 조건에 속하는가"를
-    # 나중에 UI에서 필터링하기 위해 넣는다.
-    with langfuse.start_as_current_observation(
-        as_type="span",
-        name="chapter-09-request",
-        input={"prompt": prompt},
+    # propagate_attributes는 trace-level 속성을 현재 context 안의 observation들에
+    # 전파한다. session_id/user_id/tags/trace_name처럼 trace를 묶어서 검색하는 값은
+    # observation metadata에 직접 넣기보다 이 context manager로 올리는 것이 최신 SDK
+    # 권장 방식이다.
+    with propagate_attributes(
+        trace_name=trace_name,
+        session_id=session_id,
+        user_id=user_id,
+        tags=["model-serving-study", "chapter-09"],
         metadata={
             "chapter": "09-langfuse-observability",
             "mode": "fake-llm",
         },
-    ) as root_span:
-        # Langfuse UI에서 multi-turn conversation이나 같은 실습 묶음을 보기 쉽도록
-        # session_id/user_id를 trace에 연결한다.
-        root_span.update_trace(
-            name="chapter-09-first-trace",
-            session_id="study-session-001",
-            user_id="study-user-local",
-            tags=["model-serving-study", "chapter-09"],
-        )
-
+    ):
+        # root span은 "요청 하나의 시작점"이다. Langfuse UI에서는 이 span 아래에
+        # prepare-request span과 fake-llm-call generation이 tree 형태로 보인다.
         with langfuse.start_as_current_observation(
             as_type="span",
-            name="prepare-request",
-            input={"raw_prompt": prompt},
-        ) as prepare_span:
-            prepared_prompt = prompt.strip()
-            prepare_span.update(output={"prepared_prompt": prepared_prompt})
+            name="chapter-09-request",
+            input={"prompt": prompt},
+        ) as root_span:
+            with langfuse.start_as_current_observation(
+                as_type="span",
+                name="prepare-request",
+                input={"raw_prompt": prompt},
+            ) as prepare_span:
+                prepared_prompt = prompt.strip()
+                prepare_span.update(output={"prepared_prompt": prepared_prompt})
 
-        started = time.perf_counter()
-        result = fake_llm_call(prepared_prompt)
-        latency_ms = round((time.perf_counter() - started) * 1000, 2)
+            started = time.perf_counter()
+            result = fake_llm_call(prepared_prompt)
+            latency_ms = round((time.perf_counter() - started) * 1000, 2)
 
-        # generation은 LLM call을 나타낸다.
-        # prompt, completion, model, token usage를 한 곳에 묶어 UI에서 볼 수 있다.
-        with langfuse.start_as_current_observation(
-            as_type="generation",
-            name="fake-llm-call",
-            model="fake-observability-model",
-            input=prepared_prompt,
-            metadata={"provider": "local-fake"},
-            usage_details={
-                "input": result.prompt_tokens,
-                "output": result.completion_tokens,
-                "total": result.prompt_tokens + result.completion_tokens,
-            },
-        ) as generation:
-            generation.update(
-                output=result.output,
-                metadata={"latency_ms": latency_ms},
+            # generation은 LLM call을 나타낸다.
+            # prompt, completion, model, token usage를 한 곳에 묶어 UI에서 볼 수 있다.
+            # model도 학습용 기본값이다. 실제 vLLM/NIM/OpenAI 호출에서는 요청에 사용한
+            # served model name 또는 provider model name을 그대로 기록한다.
+            with langfuse.start_as_current_observation(
+                as_type="generation",
+                name="fake-llm-call",
+                model=model_name,
+                input=prepared_prompt,
+                metadata={"provider": "local-fake"},
+                usage_details={
+                    "input": result.prompt_tokens,
+                    "output": result.completion_tokens,
+                    "total": result.prompt_tokens + result.completion_tokens,
+                },
+            ) as generation:
+                generation.update(
+                    output=result.output,
+                    metadata={"latency_ms": latency_ms},
+                )
+
+            root_span.update(
+                output={
+                    "answer": result.output,
+                    "latency_ms": latency_ms,
+                    "prompt_tokens": result.prompt_tokens,
+                    "completion_tokens": result.completion_tokens,
+                }
             )
-
-        root_span.update(
-            output={
-                "answer": result.output,
-                "latency_ms": latency_ms,
-                "prompt_tokens": result.prompt_tokens,
-                "completion_tokens": result.completion_tokens,
-            }
-        )
 
     # 짧은 CLI script는 process가 바로 종료되므로 flush를 호출해야 한다.
     # 그렇지 않으면 background queue에 남은 event가 전송되기 전에 종료될 수 있다.

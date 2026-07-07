@@ -73,6 +73,13 @@ def main() -> None:
     print()
     for row in rows:
         print(row)
+    print()
+    print("## How to read this CSV")
+    print("- prompt_tokens: 입력 prompt가 얼마나 긴지 본다. 값이 크면 prefill 비용과 latency가 늘 수 있다.")
+    print("- completion_tokens: 답변이 얼마나 길게 생성됐는지 본다. 값이 크면 decode 시간과 비용이 늘 수 있다.")
+    print("- latency_ms: prompt version별 응답 시간이 어떻게 달라지는지 본다.")
+    print("- answer_preview: 숫자만 보지 말고 답변 품질이 목적에 맞는지 같이 본다.")
+    print("- 실제 비교에서는 같은 prompt를 여러 번 실행해 평균, p95, 실패율까지 같이 보는 것이 좋다.")
 
 
 if __name__ == "__main__":

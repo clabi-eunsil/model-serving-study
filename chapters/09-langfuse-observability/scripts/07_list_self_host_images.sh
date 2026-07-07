@@ -9,6 +9,7 @@ set -euo pipefail
 
 SELF_HOST_DIR="${SELF_HOST_DIR:-self-host/langfuse-official}"
 OUTPUT="${OUTPUT:-results/langfuse-self-host-images.txt}"
+ENV_FILE="${SELF_HOST_DIR}/.env"
 
 if [[ ! -f "${SELF_HOST_DIR}/docker-compose.yml" ]]; then
   echo "Missing ${SELF_HOST_DIR}/docker-compose.yml"
@@ -18,7 +19,11 @@ fi
 
 mkdir -p "$(dirname "${OUTPUT}")"
 
-docker compose -f "${SELF_HOST_DIR}/docker-compose.yml" config --images | sort -u | tee "${OUTPUT}"
+if [[ -f "${ENV_FILE}" ]]; then
+  docker compose --env-file "${ENV_FILE}" -f "${SELF_HOST_DIR}/docker-compose.yml" config --images | sort -u | tee "${OUTPUT}"
+else
+  docker compose -f "${SELF_HOST_DIR}/docker-compose.yml" config --images | sort -u | tee "${OUTPUT}"
+fi
 
 cat <<EOF
 

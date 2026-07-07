@@ -1,0 +1,90 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1440" height="820" viewBox="0 0 1440 820" role="img" aria-labelledby="title desc">
+  <title id="title">Langfuse trace screen guide</title>
+  <desc id="desc">A numbered guide showing the main areas of the Langfuse tracing screen: filters, trace list, observation tree, detail header, preview, metadata, scores, and logs.</desc>
+  <style>
+    .bg { fill: #f8fafc; }
+    .screen { fill: #0f172a; stroke: #334155; stroke-width: 1.5; rx: 10; }
+    .panel { fill: #111827; stroke: #475569; stroke-width: 1.2; rx: 6; }
+    .panel2 { fill: #172033; stroke: #526179; stroke-width: 1.2; rx: 6; }
+    .detail { fill: #111827; stroke: #64748b; stroke-width: 1.2; rx: 6; }
+    .title { font: 700 30px system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; fill: #111827; }
+    .subtitle { font: 400 16px system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; fill: #4b5563; }
+    .label { font: 700 14px system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; fill: #e5e7eb; }
+    .small { font: 400 12px system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; fill: #cbd5e1; }
+    .tiny { font: 400 11px system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; fill: #94a3b8; }
+    .legend { fill: #ffffff; stroke: #cbd5e1; stroke-width: 1.2; rx: 8; }
+    .legend-title { font: 700 14px system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; fill: #111827; }
+    .legend-text { font: 400 13px system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; fill: #334155; }
+    .badge { fill: #ffffff; stroke: #2563eb; stroke-width: 2; }
+    .badge-text { font: 700 12px system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; fill: #1e40af; text-anchor: middle; dominant-baseline: central; }
+    .ok { fill: #14532d; stroke: #22c55e; stroke-width: 1; rx: 4; }
+    .error { fill: #7f1d1d; stroke: #ef4444; stroke-width: 1; rx: 4; }
+  </style>
+
+  <rect class="bg" width="1440" height="820" />
+  <text class="title" x="52" y="58">Langfuse Tracing 화면은 어디를 보면 될까?</text>
+  <text class="subtitle" x="52" y="88">실제 UI와 완전히 같은 캡처가 아니라, 처음 볼 때 헷갈리는 영역을 번호로 나눈 학습용 화면 지도다.</text>
+
+  <rect class="screen" x="52" y="122" width="1336" height="470" />
+  <rect class="panel" x="72" y="152" width="260" height="410" />
+  <text class="label" x="94" y="180">Filters</text>
+  <text class="small" x="94" y="214">Environment</text>
+  <text class="small" x="94" y="242">Type: span / generation</text>
+  <text class="small" x="94" y="270">Level: ERROR / DEFAULT</text>
+  <text class="small" x="94" y="298">Trace Name</text>
+  <text class="small" x="94" y="326">Model ID</text>
+  <circle class="badge" cx="306" cy="166" r="13" />
+  <text class="badge-text" x="306" y="166">1</text>
+
+  <rect class="panel" x="352" y="152" width="390" height="410" />
+  <text class="label" x="374" y="180">Trace list</text>
+  <rect class="panel2" x="374" y="206" width="340" height="52" />
+  <text class="small" x="392" y="228">chapter-09-first-trace</text>
+  <rect class="ok" x="590" y="214" width="64" height="20" />
+  <text class="tiny" x="604" y="229">DEFAULT</text>
+  <text class="tiny" x="392" y="247">Input preview, start time, type</text>
+  <rect class="panel2" x="374" y="278" width="340" height="52" />
+  <text class="small" x="392" y="300">chapter-09-request</text>
+  <rect class="error" x="590" y="286" width="48" height="20" />
+  <text class="tiny" x="602" y="301">ERROR</text>
+  <text class="tiny" x="392" y="319">이전 실패 trace는 남아 있을 수 있음</text>
+  <circle class="badge" cx="716" cy="166" r="13" />
+  <text class="badge-text" x="716" y="166">2</text>
+
+  <rect class="panel" x="762" y="152" width="245" height="410" />
+  <text class="label" x="784" y="180">Tree / Timeline</text>
+  <rect class="panel2" x="784" y="210" width="190" height="42" />
+  <text class="small" x="802" y="236">root span</text>
+  <rect class="panel2" x="812" y="272" width="162" height="42" />
+  <text class="small" x="830" y="298">prepare-request</text>
+  <rect class="panel2" x="812" y="334" width="162" height="42" />
+  <text class="small" x="830" y="360">fake-llm-call</text>
+  <text class="tiny" x="784" y="424">Tree는 호출 구조, Timeline은 시간 순서</text>
+  <circle class="badge" cx="982" cy="166" r="13" />
+  <text class="badge-text" x="982" y="166">3</text>
+
+  <rect class="panel" x="1026" y="152" width="342" height="410" />
+  <text class="label" x="1048" y="180">Observation detail</text>
+  <rect class="detail" x="1048" y="208" width="294" height="58" />
+  <text class="small" x="1066" y="231">Name, latency, level, error message</text>
+  <text class="tiny" x="1066" y="250">ERROR면 여기서 에러 원인을 먼저 본다</text>
+  <rect class="detail" x="1048" y="290" width="294" height="72" />
+  <text class="small" x="1066" y="313">Preview</text>
+  <text class="tiny" x="1066" y="334">input / output</text>
+  <text class="tiny" x="1066" y="352">generation이면 prompt / completion</text>
+  <rect class="detail" x="1048" y="386" width="294" height="84" />
+  <text class="small" x="1066" y="409">Metadata / Scores / Log View</text>
+  <text class="tiny" x="1066" y="430">model, token usage, user/session</text>
+  <text class="tiny" x="1066" y="448">log에는 SDK 에러가 남을 수 있음</text>
+  <circle class="badge" cx="1342" cy="166" r="13" />
+  <text class="badge-text" x="1342" y="166">4</text>
+
+  <rect class="legend" x="52" y="622" width="1336" height="156" />
+  <text class="legend-title" x="78" y="650">번호별로 보는 순서</text>
+  <text class="legend-text" x="78" y="680">1. Filters: ERROR만 볼지, generation만 볼지, 특정 trace name만 볼지 좁힌다.</text>
+  <text class="legend-text" x="78" y="706">2. Trace list: 방금 만든 trace를 고른다. ERROR trace는 이전 실패 실행이 남은 것일 수 있다.</text>
+  <text class="legend-text" x="78" y="732">3. Tree / Timeline: root span 아래 prepare-request span과 fake-llm-call generation이 있는지 본다.</text>
+  <text class="legend-text" x="720" y="680">4. Detail: Preview에서 input/output을 보고, Metadata에서 model, token usage, session/user 정보를 본다.</text>
+  <text class="legend-text" x="720" y="706">ERROR가 있으면 detail header와 Log View의 exception message를 먼저 확인한다.</text>
+  <text class="legend-text" x="720" y="732">Scores, Annotate, Dataset 버튼은 평가/데이터셋 단계에서 더 깊게 다룬다.</text>
+</svg>
