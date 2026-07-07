@@ -27,6 +27,8 @@
 | Development Environment | `.venv`, package install, script 실행처럼 실습 환경을 구성하는 개념 |
 | Model Registry & Auth | Hugging Face, Docker Hub, NGC, token처럼 모델/image 저장소와 인증 관련 개념 |
 | GPU & Runtime | CUDA, GPU memory, runtime option처럼 GPU 실행 환경과 관련된 개념 |
+| LLM Observability | prompt, completion, trace, user/session처럼 LLM application 관측과 관련된 개념 |
+| Evaluation | dataset, experiment, score처럼 LLM application 품질 평가와 관련된 개념 |
 
 ## Terms
 
@@ -229,3 +231,11 @@
 | Dashboard Provisioning | 대시보드 프로비저닝 | Operations | grafana, dashboard, provisioning | [08](chapters/08-serving-observability/README.md) | Grafana datasource와 dashboard를 UI가 아니라 파일로 자동 등록하는 방식 |
 | DCGM Exporter | DCGM 익스포터 | GPU & Runtime | nvidia, dcgm, gpu-metrics | [08](chapters/08-serving-observability/README.md) | NVIDIA GPU telemetry를 Prometheus metric으로 노출하는 exporter |
 | Exporter | 익스포터 | Operations | prometheus, exporter, metrics | [08](chapters/08-serving-observability/README.md) | 어떤 시스템의 상태를 Prometheus가 scrape할 수 있는 `/metrics` 형태로 노출하는 component |
+| Langfuse | Langfuse LLM observability platform | LLM Observability | trace, prompt, eval | [09](chapters/09-langfuse-observability/README.md) | LLM application의 trace, prompt, completion, token usage, latency, evaluation을 추적하고 분석하는 open-source AI engineering platform |
+| Trace | 트레이스, 요청 단위 기록 | LLM Observability | trace, request, langfuse | [09](chapters/09-langfuse-observability/README.md) | 사용자 요청 하나가 app 내부에서 어떤 단계들을 거쳐 처리되었는지 묶어 기록한 단위 |
+| Observation | 관측 항목 | LLM Observability | observation, span, generation | [09](chapters/09-langfuse-observability/README.md) | Langfuse trace 안의 세부 단계. span, generation, event 같은 형태가 있다. |
+| Span | 스팬 | LLM Observability | span, workflow, trace | [09](chapters/09-langfuse-observability/README.md) | 전처리, 검색, tool call처럼 LLM 호출이 아닌 일반 작업 단계를 기록하는 observation |
+| Generation | 생성 관측 항목 | LLM Observability | generation, llm-call, tokens | [09](chapters/09-langfuse-observability/README.md) | LLM 호출에 특화된 observation. model, prompt/messages, completion, token usage, latency 같은 정보를 기록한다. |
+| Session | 세션 | LLM Observability | session, conversation, user | [09](chapters/09-langfuse-observability/README.md) | 여러 trace를 하나의 대화나 workflow로 묶는 ID. multi-turn chatbot 분석에 유용하다. |
+| Prompt Versioning | 프롬프트 버전 관리 | LLM Observability | prompt, versioning, langfuse | [09](chapters/09-langfuse-observability/README.md) | prompt 변경 이력을 version/label로 관리해 latency, cost, quality 변화를 비교하는 방식 |
+| Evaluation Dataset | 평가 데이터셋 | Evaluation | dataset, eval, experiment | [09](chapters/09-langfuse-observability/README.md) | prompt/model 변경을 같은 입력 묶음으로 비교하기 위한 dataset. input과 expected output을 함께 관리할 수 있다. |

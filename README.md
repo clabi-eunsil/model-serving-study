@@ -93,7 +93,7 @@ Docker, Kubernetes, KServe처럼 실행 환경이 container나 cluster 안에 �
 - [x] 6. NVIDIA NIM: [chapters/06-nvidia-nim/README.md](chapters/06-nvidia-nim/README.md)
 - [x] 7. 성능 테스트 방법론: [chapters/07-performance-methodology/README.md](chapters/07-performance-methodology/README.md)
 - [x] 8. 모델 서빙 관측성: [chapters/08-serving-observability/README.md](chapters/08-serving-observability/README.md)
-- [ ] 9. Langfuse와 LLM Observability
+- [x] 9. Langfuse와 LLM Observability: [chapters/09-langfuse-observability/README.md](chapters/09-langfuse-observability/README.md)
 - [ ] 10. Kubernetes 기반 모델 배포
 - [ ] 11. KServe 입문
 - [ ] 12. KServe로 LLM 서빙
@@ -223,10 +223,12 @@ Docker, Kubernetes, KServe처럼 실행 환경이 container나 cluster 안에 �
 - [ ] session/user 단위 관측 방법 이해
 - [ ] prompt versioning 개념 이해
 - [ ] evaluation dataset 관리 방식 이해
-- [ ] 실습: Langfuse local 또는 cloud 환경 준비
+- [ ] 실습: Langfuse self-hosted local 또는 cloud 환경 준비
 - [ ] 실습: Python SDK로 trace 전송
 - [ ] 실습: vLLM/OpenAI-compatible endpoint 호출 결과 추적
 - [ ] 실습: prompt별 latency와 token usage 비교
+
+자료: [chapters/09-langfuse-observability/README.md](chapters/09-langfuse-observability/README.md)
 
 ## 10. Kubernetes 기반 모델 배포
 
