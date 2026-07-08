@@ -5,7 +5,7 @@
 
 관측성 도구, dashboard provisioning 방식, DCGM exporter image tag는 업데이트될 수 있다.  
 이 문서는 2026-07-06 기준 공식 문서를 바탕으로 작성했다.  
-실습 전 [references.md](references.md)의 공식 문서를 다시 확인한다.
+핵심 공식 문서는 본문에 바로 연결해 두고, 전체 목록은 [references.md](references.md)에 모아 둔다.
 
 ## 학습 목표
 
@@ -22,7 +22,7 @@
 
 1. [../../GLOSSARY.md](../../GLOSSARY.md)에서 observability, Prometheus, Grafana 관련 용어를 확인한다.
 2. 아래 핵심 개념 요약을 읽는다.
-3. [references.md](references.md)에서 공식 문서와 업데이트 가능성이 큰 부분을 확인한다.
+3. [공식 문서 바로가기](#공식-문서-바로가기)에서 Prometheus/Grafana/DCGM 문서의 확인 위치를 본다.
 4. [scripts/01_check_env.sh](scripts/01_check_env.sh)로 Python/Docker/GPU 환경을 확인한다.
 5. 챕터별 `.venv`를 만들고 dependency를 설치한다.
 6. [scripts/02_run_model_server.sh](scripts/02_run_model_server.sh)로 metric을 노출하는 FastAPI server를 실행한다.
@@ -33,6 +33,18 @@
 11. [scripts/08_query_prometheus.sh](scripts/08_query_prometheus.sh)로 PromQL query 결과를 확인한다.
 12. GPU 서버라면 [scripts/09_start_dcgm_exporter.sh](scripts/09_start_dcgm_exporter.sh)로 GPU metric을 확인한다.
 13. [scripts/10_stop_monitoring.sh](scripts/10_stop_monitoring.sh)와 [templates/lab-notes.md](templates/lab-notes.md)를 보며 실습을 마무리한다.
+
+## 공식 문서 바로가기
+
+| 문서 | 바로 볼 부분 |
+| --- | --- |
+| [Prometheus metric types](https://prometheus.io/docs/concepts/metric_types/) | Counter, Gauge, Histogram, Summary 차이 |
+| [Prometheus configuration](https://prometheus.io/docs/prometheus/latest/configuration/configuration/) | `scrape_configs`, `scrape_interval`, target 설정 |
+| [Prometheus naming best practices](https://prometheus.io/docs/practices/naming/) | metric 이름, 단위 suffix, label cardinality 주의 |
+| [prometheus_client Python instrumenting](https://prometheus.github.io/client_python/instrumenting/) | Python에서 Counter/Gauge/Histogram 정의 |
+| [prometheus_client FastAPI example](https://prometheus.github.io/client_python/exporting/http/fastapi-gunicorn/) | FastAPI에서 `/metrics`를 ASGI app으로 mount |
+| [Grafana provisioning](https://grafana.com/docs/grafana/latest/administration/provisioning/) | datasource와 dashboard 파일 자동 등록 |
+| [NVIDIA DCGM Exporter](https://docs.nvidia.com/datacenter/dcgm/latest/gpu-telemetry/dcgm-exporter.html) | GPU utilization/memory metric을 Prometheus로 노출 |
 
 ## 실행 환경 기준
 

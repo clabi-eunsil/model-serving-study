@@ -3,10 +3,9 @@ set -euo pipefail
 
 # KServe 실습을 시작하기 전에 cluster와 KServe 설치 상태를 확인한다.
 #
-# 이 챕터는 KServe 자체를 무조건 설치하는 스크립트를 제공하지 않는다.
-# KServe 설치는 Kubernetes/Knative/Istio/cert-manager 버전에 민감하고,
-# cluster마다 standard mode, knative mode 선택이 달라지기 때문이다.
-# 대신 여기서는 "현재 cluster가 KServe 실습을 할 준비가 되었는지"를 먼저 본다.
+# KServe가 아직 없다면 README의 "KServe 설치 방법"을 먼저 보고,
+# 학습용 standard mode 설치는 scripts/00_install_kserve_quickstart_standard.sh로 진행한다.
+# 이 스크립트는 설치 후 상태를 확인하거나, 이미 설치된 cluster가 실습 가능한지 점검한다.
 
 echo "## kubectl"
 if command -v kubectl >/dev/null 2>&1; then
@@ -33,7 +32,11 @@ if kubectl get crd inferenceservices.serving.kserve.io >/dev/null 2>&1; then
   echo "InferenceService CRD: installed"
 else
   echo "InferenceService CRD: not found"
-  echo "Install KServe first. See references.md and the KServe Quickstart Guide."
+  echo "KServe가 아직 설치되지 않았다."
+  echo "학습용 standard mode 설치 안내:"
+  echo "  bash scripts/00_install_kserve_quickstart_standard.sh"
+  echo "공식 Quickstart:"
+  echo "  https://kserve.github.io/website/docs/getting-started/quickstart-guide"
 fi
 
 echo

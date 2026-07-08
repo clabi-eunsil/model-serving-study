@@ -111,8 +111,11 @@ bash scripts/09_check_autoscaling.sh | tee results/autoscaling.txt
 ## custom runtime 구조 확인
 
 ```bash
-bash scripts/10_preview_custom_runtime.sh | tee results/custom-runtime-example.txt
+bash scripts/10_apply_custom_runtime.sh | tee results/custom-runtime-example.txt
 ```
+
+이 단계는 custom runtime 정의를 실제 Kubernetes 리소스로 등록하는 실습이다.
+다만 ServingRuntime을 등록한다고 바로 model server Pod가 뜨지는 않는다. Pod는 InferenceService가 이 runtime을 참조할 때 만들어진다.
 
 기록할 것:
 
@@ -120,8 +123,17 @@ bash scripts/10_preview_custom_runtime.sh | tee results/custom-runtime-example.t
 | --- | --- | --- |
 | `ServingRuntime` vs `ClusterServingRuntime` | namespace 범위 runtime인지 cluster 전체 runtime인지 |  |
 | `supportedModelFormats` | 어떤 model format을 이 runtime에 연결할지 |  |
+| `autoSelect` | 자동 선택될지, InferenceService에서 명시적으로 참조해야 하는지 |  |
 | `containers.image` | 실제 vLLM image를 어디서 가져올지 |  |
 | `containers.args` | vLLM server 실행 옵션 |  |
+
+예상 관찰:
+
+| 출력 | 의미 |
+| --- | --- |
+| `servingruntime.serving.kserve.io/custom-vllm-runtime created` 또는 `configured` | runtime 리소스가 cluster에 등록됨 |
+| `kubectl get servingruntime`에 `custom-vllm-runtime` 표시 | namespace 안에서 custom runtime을 찾을 수 있음 |
+| Pod가 새로 뜨지 않음 | 정상. runtime 정의만 적용한 것이고 아직 InferenceService가 참조하지 않았음 |
 
 ## 문제 해결 메모
 
@@ -130,6 +142,9 @@ bash scripts/10_preview_custom_runtime.sh | tee results/custom-runtime-example.t
 | Pending | `kubectl -n kserve-llm get events` | GPU 부족 가능성 |  |
 | ImagePullBackOff | `kubectl describe pod` | image pull 문제 |  |
 | storage initializer 실패 | pod event/log | token 또는 네트워크 문제 |  |
+| `401 Unauthorized` | pod/init container log | HF token 없음 또는 잘못됨 |  |
+| `403 Forbidden` | pod/init container log | gated model 접근 승인 없음 |  |
+| `Repository Not Found` | pod/init container log | model repo 이름 오타 또는 private repo 권한 없음 |  |
 | OOMKilled | pod status | memory limit 부족 |  |
 | 404/route 실패 | Host header, gateway port-forward | hostname/path 문제 |  |
 
@@ -148,3 +163,5 @@ deactivate
 - `modelFormat: huggingface`는 KServe Hugging Face runtime을 사용하겠다는 뜻이고, runtime 내부에서 vLLM backend가 text generation을 처리한다.
 - KServe의 OpenAI-compatible endpoint는 `/openai/v1/...` 경로를 사용한다.
 - local gateway 호출에서는 Host header가 매우 중요하다.
+- vLLM을 직접 띄우면 `/v1/chat/completions`로 호출하지만, KServe gateway를 거치면 `/openai/v1/chat/completions`와 Host header를 함께 써야 한다.
+- `storageUri: hf://...`는 runtime이 Hugging Face Hub에서 모델을 내려받는 흐름을 만든다. private/gated model은 HF token이 없으면 다운로드 단계에서 실패할 수 있다.

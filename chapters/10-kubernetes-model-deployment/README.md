@@ -3,9 +3,9 @@
 챕터 10에서는 Docker container로 만들었던 모델 서버를 Kubernetes 위에 올린다.  
 이번 단원의 핵심은 "모델 서버 container 하나를 실행한다"가 아니라, **운영 환경에서 반복 배포할 수 있는 Kubernetes object 흐름**을 이해하는 것이다.
 
-Kubernetes 설치 방식, NVIDIA device plugin 버전, Ingress controller 구성은 자주 바뀔 수 있다.    
-이 문서는 2026-07-07 기준 공식 문서를 바탕으로 작성했다.    
-실습 전 [references.md](references.md)의 공식 문서를 다시 확인한다.
+Kubernetes 설치 방식, NVIDIA device plugin 버전, Ingress controller 구성은 자주 바뀔 수 있다.
+이 문서는 2026-07-07 기준 공식 문서를 바탕으로 작성했다.
+핵심 공식 문서는 본문에 바로 연결해 두고, 전체 목록은 [references.md](references.md)에 모아 둔다.
 
 ## 학습 목표
 
@@ -24,7 +24,7 @@ Kubernetes 설치 방식, NVIDIA device plugin 버전, Ingress controller 구성
 
 1. [../../GLOSSARY.md](../../GLOSSARY.md)에서 Kubernetes, Deployment, Service, Ingress, PVC, probe 용어를 확인한다.
 2. [Kubernetes 구축 방식 비교](#kubernetes-구축-방식-비교)를 읽고 실습 환경을 정한다.
-3. [references.md](references.md)에서 공식 문서와 업데이트 가능성이 큰 부분을 확인한다.
+3. [공식 문서 바로가기](#공식-문서-바로가기)에서 Kubernetes/minikube/NVIDIA device plugin 문서의 확인 위치를 본다.
 4. [scripts/01_check_env.sh](scripts/01_check_env.sh)로 host 도구와 cluster 상태를 확인한다.
 5. 로컬 실습이면 [scripts/02_start_minikube.sh](scripts/02_start_minikube.sh)로 minikube cluster를 만든다.
 6. [scripts/03_build_and_load_image.sh](scripts/03_build_and_load_image.sh)로 챕터 3 FastAPI image를 만들고 cluster에 전달한다.
@@ -61,6 +61,20 @@ Kubernetes 설치 방식, NVIDIA device plugin 버전, Ingress controller 구성
 | GPU 서버 minikube | CPU 실습 흐름, GPU patch 실습 | NVIDIA driver/runtime, minikube GPU 설정, device plugin 확인 |
 | k3s 또는 kubeadm | manifest 구조, `kubectl apply -f`, Service/PVC/probe 개념 | image registry, StorageClass, Ingress controller, GPU runtime 설정 |
 | managed Kubernetes | Deployment/Service/PVC/probe/GPU request 개념 | cloud registry, cloud disk StorageClass, node group, IAM, LoadBalancer/Ingress 설정 |
+
+## 공식 문서 바로가기
+
+이번 장에서 자주 확인할 공식 문서는 아래와 같다.
+
+| 문서 | 바로 볼 부분 |
+| --- | --- |
+| [Kubernetes Deployment](https://kubernetes.io/docs/concepts/workloads/controllers/deployment/) | Deployment가 Pod replica와 rolling update를 관리하는 방식 |
+| [Kubernetes Service](https://kubernetes.io/docs/concepts/services-networking/service/) | Pod를 안정적인 endpoint로 묶는 방식 |
+| [Kubernetes Ingress](https://kubernetes.io/docs/concepts/services-networking/ingress/) | HTTP routing과 Ingress controller 관계 |
+| [Kubernetes Persistent Volumes](https://kubernetes.io/docs/concepts/storage/persistent-volumes/) | PVC, access mode, storage backend 개념 |
+| [minikube start](https://minikube.sigs.k8s.io/docs/start/) | local Kubernetes cluster 시작 방법 |
+| [NVIDIA k8s-device-plugin](https://github.com/NVIDIA/k8s-device-plugin) | `nvidia.com/gpu` resource를 node에 노출하는 방식 |
+| [Helm documentation](https://helm.sh/docs/) | chart 설치, `helm repo`, `helm upgrade --install` 기본 흐름 |
 
 ## Kubernetes 구축 방식 비교
 

@@ -1,120 +1,131 @@
-<svg xmlns="http://www.w3.org/2000/svg" width="1440" height="840" viewBox="0 0 1440 840" role="img" aria-labelledby="title desc">
-  <title id="title">Advanced LLM serving strategy map</title>
-  <desc id="desc">Chapter 13의 고급 LLM 서빙 주제를 문제 상황, 검토할 기술, 확인 지표 순서로 정리한 표형 다이어그램</desc>
+<svg xmlns="http://www.w3.org/2000/svg" width="1500" height="920" viewBox="0 0 1500 920" role="img" aria-labelledby="title desc">
+  <title id="title">LLM serving 고급 주제 관계도</title>
+  <desc id="desc">LLM serving 요청 흐름과 챕터 13 고급 주제를 Memory, Latency, Operation 영역으로 나누어 보여주는 다이어그램</desc>
   <defs>
-    <marker id="arrow" markerWidth="10" markerHeight="10" refX="8" refY="5" orient="auto" markerUnits="strokeWidth">
-      <path d="M0,0 L10,5 L0,10 Z" fill="#475569"/>
+    <marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M 0 0 L 10 5 L 0 10 z" fill="#475569"/>
     </marker>
     <style>
       .bg { fill: #f8fafc; }
-      .panel { fill: #ffffff; stroke: #cbd5e1; stroke-width: 1.4; rx: 8; }
-      .header { fill: #eef2ff; stroke: #6677c8; stroke-width: 1.5; rx: 8; }
-      .problem { fill: #e8f4ff; stroke: #5f92c8; stroke-width: 1.5; rx: 8; }
-      .topic { fill: #fff7ed; stroke: #d28b28; stroke-width: 1.5; rx: 8; }
-      .check { fill: #eaf7ee; stroke: #62a875; stroke-width: 1.5; rx: 8; }
-      .quiet { fill: #f8fafc; stroke: #cbd5e1; stroke-width: 1.2; rx: 8; }
-      .line { fill: none; stroke: #475569; stroke-width: 2.3; marker-end: url(#arrow); }
-      .title { font: 700 30px system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; fill: #111827; }
-      .subtitle { font: 400 16px system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; fill: #4b5563; }
-      .col-title { font: 700 15px system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; fill: #334155; text-anchor: middle; }
-      .label { font: 700 17px system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; fill: #111827; text-anchor: middle; }
-      .small { font: 400 13px system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; fill: #475569; text-anchor: middle; }
-      .tiny { font: 400 12px system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; fill: #64748b; text-anchor: middle; }
-      .badge { fill: #ffffff; stroke: #475569; stroke-width: 1.5; }
-      .badge-text { font: 700 12px system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; fill: #334155; text-anchor: middle; dominant-baseline: central; }
+      .title { font: 700 30px Arial, sans-serif; fill: #0f172a; }
+      .subtitle { font: 15px Arial, sans-serif; fill: #475569; }
+      .section { font: 700 20px Arial, sans-serif; fill: #111827; }
+      .label { font: 700 15px Arial, sans-serif; fill: #111827; }
+      .small { font: 13px Arial, sans-serif; fill: #475569; }
+      .tiny { font: 12px Arial, sans-serif; fill: #64748b; }
+      .frame { fill: #ffffff; stroke: #cbd5e1; stroke-width: 1.4; rx: 12; }
+      .flow { fill: #eef2ff; stroke: #6366f1; stroke-width: 1.4; rx: 10; }
+      .memory { fill: #fff7ed; stroke: #ea580c; stroke-width: 1.4; rx: 10; }
+      .latency { fill: #fef9c3; stroke: #ca8a04; stroke-width: 1.4; rx: 10; }
+      .ops { fill: #ecfdf5; stroke: #059669; stroke-width: 1.4; rx: 10; }
+      .guard { fill: #fce7f3; stroke: #db2777; stroke-width: 1.4; rx: 10; }
+      .line { stroke: #475569; stroke-width: 2.2; fill: none; marker-end: url(#arrow); }
+      .hint { stroke: #94a3b8; stroke-width: 2; stroke-dasharray: 8 8; fill: none; marker-end: url(#arrow); }
+      .legend { fill: #f1f5f9; stroke: #94a3b8; stroke-width: 1.2; rx: 10; }
     </style>
   </defs>
 
-  <rect class="bg" width="1440" height="840"/>
-  <text class="title" x="56" y="58">Chapter 13 문제별 해결 전략</text>
-  <text class="subtitle" x="56" y="88">문제가 생겼을 때 어떤 기술을 검토하고, 무엇을 확인할지 한 줄씩 읽는다.</text>
+  <rect class="bg" width="1500" height="920"/>
+  <text class="title" x="58" y="54">챕터 13 고급 주제는 요청 흐름의 서로 다른 지점을 조정한다</text>
+  <text class="subtitle" x="58" y="84">위쪽은 기본 LLM serving 흐름이고, 아래쪽은 어떤 문제를 어느 영역에서 다루는지 나눈 것이다.</text>
 
-  <rect class="panel" x="44" y="122" width="1352" height="704"/>
+  <rect class="frame" x="44" y="116" width="1412" height="760"/>
 
-  <rect class="header" x="76" y="154" width="360" height="54"/>
-  <text class="col-title" x="256" y="187">문제 상황</text>
+  <!-- Flow row -->
+  <text class="section" x="78" y="158">기본 요청 흐름</text>
 
-  <rect class="header" x="540" y="154" width="360" height="54"/>
-  <text class="col-title" x="720" y="187">검토할 기술</text>
+  <rect class="flow" x="78" y="184" width="210" height="74"/>
+  <text class="label" x="103" y="215">1. client 요청</text>
+  <text class="small" x="103" y="239">user, service, tenant</text>
 
-  <rect class="header" x="1004" y="154" width="360" height="54"/>
-  <text class="col-title" x="1184" y="187">확인할 것</text>
+  <path class="line" d="M 288 221 H 340"/>
 
-  <rect class="problem" x="76" y="248" width="360" height="68"/>
-  <text class="label" x="256" y="276">GPU memory가 부족하다</text>
-  <text class="small" x="256" y="298">weight, KV cache가 먼저 압박된다</text>
-  <path class="line" d="M436 282 H540"/>
-  <circle class="badge" cx="488" cy="282" r="12"/><text class="badge-text" x="488" y="282">1</text>
-  <rect class="topic" x="540" y="248" width="360" height="68"/>
-  <text class="label" x="720" y="276">Quantization</text>
-  <text class="small" x="720" y="298">AWQ, GPTQ, bitsandbytes</text>
-  <path class="line" d="M900 282 H1004"/>
-  <rect class="check" x="1004" y="248" width="360" height="68"/>
-  <text class="label" x="1184" y="276">품질과 memory</text>
-  <text class="small" x="1184" y="298">GPU 지원, license, accuracy</text>
+  <rect class="flow" x="340" y="184" width="210" height="74"/>
+  <text class="label" x="365" y="215">2. gateway</text>
+  <text class="small" x="365" y="239">인증, 제한, routing</text>
 
-  <rect class="problem" x="76" y="340" width="360" height="68"/>
-  <text class="label" x="256" y="368">모델이 GPU 1장에 안 들어간다</text>
-  <text class="small" x="256" y="390">단일 device 한계를 넘는다</text>
-  <path class="line" d="M436 374 H540"/>
-  <circle class="badge" cx="488" cy="374" r="12"/><text class="badge-text" x="488" y="374">2</text>
-  <rect class="topic" x="540" y="340" width="360" height="68"/>
-  <text class="label" x="720" y="368">Parallelism</text>
-  <text class="small" x="720" y="390">tensor, pipeline parallelism</text>
-  <path class="line" d="M900 374 H1004"/>
-  <rect class="check" x="1004" y="340" width="360" height="68"/>
-  <text class="label" x="1184" y="368">GPU 간 통신</text>
-  <text class="small" x="1184" y="390">NVLink, node 수, utilization</text>
+  <path class="line" d="M 550 221 H 602"/>
 
-  <rect class="problem" x="76" y="432" width="360" height="68"/>
-  <text class="label" x="256" y="460">token 생성이 느리다</text>
-  <text class="small" x="256" y="482">decode 단계가 병목이 된다</text>
-  <path class="line" d="M436 466 H540"/>
-  <circle class="badge" cx="488" cy="466" r="12"/><text class="badge-text" x="488" y="466">3</text>
-  <rect class="topic" x="540" y="432" width="360" height="68"/>
-  <text class="label" x="720" y="460">Speculative decoding</text>
-  <text class="small" x="720" y="482">draft model, verify step</text>
-  <path class="line" d="M900 466 H1004"/>
-  <rect class="check" x="1004" y="432" width="360" height="68"/>
-  <text class="label" x="1184" y="460">inter-token latency</text>
-  <text class="small" x="1184" y="482">acceptance rate, tokens/sec</text>
+  <rect class="flow" x="602" y="184" width="210" height="74"/>
+  <text class="label" x="627" y="215">3. serving engine</text>
+  <text class="small" x="627" y="239">vLLM, NIM, runtime</text>
 
-  <rect class="problem" x="76" y="524" width="360" height="68"/>
-  <text class="label" x="256" y="552">task별 모델을 따로 띄우기 부담스럽다</text>
-  <text class="small" x="256" y="574">base model이 반복 로딩된다</text>
-  <path class="line" d="M436 558 H540"/>
-  <circle class="badge" cx="488" cy="558" r="12"/><text class="badge-text" x="488" y="558">4</text>
-  <rect class="topic" x="540" y="524" width="360" height="68"/>
-  <text class="label" x="720" y="552">LoRA / multi-LoRA</text>
-  <text class="small" x="720" y="574">base model + adapter</text>
-  <path class="line" d="M900 558 H1004"/>
-  <rect class="check" x="1004" y="524" width="360" height="68"/>
-  <text class="label" x="1184" y="552">adapter 격리</text>
-  <text class="small" x="1184" y="574">adapter별 품질, latency, 권한</text>
+  <path class="line" d="M 812 221 H 864"/>
 
-  <rect class="problem" x="76" y="616" width="360" height="68"/>
-  <text class="label" x="256" y="644">같은 prompt가 반복된다</text>
-  <text class="small" x="256" y="666">system prompt나 prefix가 길다</text>
-  <path class="line" d="M436 650 H540"/>
-  <circle class="badge" cx="488" cy="650" r="12"/><text class="badge-text" x="488" y="650">5</text>
-  <rect class="topic" x="540" y="616" width="360" height="68"/>
-  <text class="label" x="720" y="644">Prompt / response cache</text>
-  <text class="small" x="720" y="666">계산 cache와 응답 cache 구분</text>
-  <path class="line" d="M900 650 H1004"/>
-  <rect class="check" x="1004" y="616" width="360" height="68"/>
-  <text class="label" x="1184" y="644">cache hit와 안전성</text>
-  <text class="small" x="1184" y="666">tenant, 권한, 개인정보 분리</text>
+  <rect class="flow" x="864" y="184" width="210" height="74"/>
+  <text class="label" x="889" y="215">4. prefill</text>
+  <text class="small" x="889" y="239">prompt 처리, KV 생성</text>
 
-  <rect class="problem" x="76" y="708" width="360" height="68"/>
-  <text class="label" x="256" y="736">특정 client가 endpoint를 독점한다</text>
-  <text class="small" x="256" y="758">폭주와 남용을 막아야 한다</text>
-  <path class="line" d="M436 742 H540"/>
-  <circle class="badge" cx="488" cy="742" r="12"/><text class="badge-text" x="488" y="742">6</text>
-  <rect class="topic" x="540" y="708" width="360" height="68"/>
-  <text class="label" x="720" y="736">Traffic control</text>
-  <text class="small" x="720" y="758">rate limit, API key, quota</text>
-  <path class="line" d="M900 742 H1004"/>
-  <rect class="check" x="1004" y="708" width="360" height="68"/>
-  <text class="label" x="1184" y="736">보호할 자원</text>
-  <text class="small" x="1184" y="758">GPU, queue, endpoint, tenant</text>
+  <path class="line" d="M 1074 221 H 1126"/>
+
+  <rect class="flow" x="1126" y="184" width="210" height="74"/>
+  <text class="label" x="1151" y="215">5. decode/response</text>
+  <text class="small" x="1151" y="239">token 생성, 응답 반환</text>
+
+  <!-- Memory panel -->
+  <rect class="frame" x="78" y="330" width="400" height="390"/>
+  <text class="section" x="108" y="370">A. Memory / Capacity</text>
+  <text class="small" x="108" y="396">GPU memory와 모델 크기 문제</text>
+
+  <rect class="memory" x="108" y="426" width="340" height="72"/>
+  <text class="label" x="132" y="455">GPU memory가 부족하다</text>
+  <text class="small" x="132" y="479">quantization, 작은 model, KV cache 제한</text>
+
+  <rect class="memory" x="108" y="522" width="340" height="72"/>
+  <text class="label" x="132" y="551">모델이 GPU 1장에 안 들어간다</text>
+  <text class="small" x="132" y="575">tensor parallelism, pipeline parallelism</text>
+
+  <rect class="memory" x="108" y="618" width="340" height="72"/>
+  <text class="label" x="132" y="647">먼저 볼 것</text>
+  <text class="small" x="132" y="671">nvidia-smi, OOM log, GPU 수, node topology</text>
+
+  <!-- Latency panel -->
+  <rect class="frame" x="550" y="330" width="400" height="390"/>
+  <text class="section" x="580" y="370">B. Latency / Repeated Work</text>
+  <text class="small" x="580" y="396">prefill, decode, cache 문제</text>
+
+  <rect class="latency" x="580" y="426" width="340" height="64"/>
+  <text class="label" x="604" y="452">token 생성이 느리다</text>
+  <text class="small" x="604" y="474">speculative decoding, batching, quantization</text>
+
+  <rect class="latency" x="580" y="506" width="340" height="64"/>
+  <text class="label" x="604" y="532">같은 system prompt가 반복된다</text>
+  <text class="small" x="604" y="554">prompt/prefix cache</text>
+
+  <rect class="latency" x="580" y="586" width="340" height="64"/>
+  <text class="label" x="604" y="612">같은 질문과 답변이 반복된다</text>
+  <text class="small" x="604" y="634">response cache</text>
+
+  <rect class="latency" x="580" y="666" width="340" height="36"/>
+  <text class="small" x="604" y="689">볼 것: TTFT, inter-token latency, cache hit</text>
+
+  <!-- Operations panel -->
+  <rect class="frame" x="1022" y="330" width="400" height="390"/>
+  <text class="section" x="1052" y="370">C. Operation / Sharing</text>
+  <text class="small" x="1052" y="396">여러 사용자, 여러 task, 외부 공개 문제</text>
+
+  <rect class="ops" x="1052" y="426" width="340" height="64"/>
+  <text class="label" x="1076" y="452">task별로 모델을 따로 띄우기 부담</text>
+  <text class="small" x="1076" y="474">LoRA, multi-LoRA serving</text>
+
+  <rect class="guard" x="1052" y="506" width="340" height="64"/>
+  <text class="label" x="1076" y="532">특정 사용자/서비스가 독점한다</text>
+  <text class="small" x="1076" y="554">rate limiting, quota, tenant isolation</text>
+
+  <rect class="guard" x="1052" y="586" width="340" height="64"/>
+  <text class="label" x="1076" y="612">endpoint를 외부에 열어야 한다</text>
+  <text class="small" x="1076" y="634">API key, auth gateway, audit log</text>
+
+  <rect class="guard" x="1052" y="666" width="340" height="36"/>
+  <text class="small" x="1076" y="689">볼 것: tenant별 token usage, 권한, 호출 이력</text>
+
+  <!-- Loose hints from flow to panels. These are not one-to-one execution edges. -->
+  <path class="hint" d="M 707 258 V 298 H 278 V 324"/>
+  <path class="hint" d="M 969 258 V 298 H 750 V 324"/>
+  <path class="hint" d="M 445 258 V 298 H 1222 V 324"/>
+
+  <!-- Reading note -->
+  <rect class="legend" x="78" y="770" width="1260" height="70"/>
+  <text class="small" x="104" y="798">읽는 법: A/B/C는 실행 순서가 아니라 관찰 관점이다. 기본 요청 흐름의 2, 3, 4, 5번 어디서든 여러 문제가 동시에 생길 수 있다.</text>
+  <text class="small" x="104" y="824">점선 화살표는 "이 단계에서 주로 떠올릴 수 있는 조정 영역"을 느슨하게 연결한 것이며, 1:1 매핑을 뜻하지 않는다.</text>
 </svg>

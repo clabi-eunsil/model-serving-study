@@ -1,0 +1,82 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1120" height="620" viewBox="0 0 1120 620" role="img" aria-labelledby="title desc">
+  <title id="title">Tensor parallelism과 pipeline parallelism 비교</title>
+  <desc id="desc">Tensor parallelism은 하나의 layer 계산을 여러 GPU가 나누어 처리하고, pipeline parallelism은 layer 구간을 여러 GPU에 순서대로 배치한다.</desc>
+  <defs>
+    <marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse">
+      <path d="M 0 0 L 10 5 L 0 10 z" fill="#334155"/>
+    </marker>
+    <style>
+      .title { font: 700 28px Arial, sans-serif; fill: #0f172a; }
+      .section { font: 700 21px Arial, sans-serif; fill: #111827; }
+      .label { font: 600 16px Arial, sans-serif; fill: #111827; }
+      .small { font: 14px Arial, sans-serif; fill: #334155; }
+      .tiny { font: 13px Arial, sans-serif; fill: #475569; }
+      .box { fill: #ffffff; stroke: #94a3b8; stroke-width: 2; rx: 10; }
+      .gpu { fill: #e0f2fe; stroke: #0284c7; stroke-width: 2; rx: 10; }
+      .layer { fill: #f8fafc; stroke: #64748b; stroke-width: 2; rx: 8; }
+      .stage { fill: #ecfdf5; stroke: #059669; stroke-width: 2; rx: 10; }
+      .note { fill: #fff7ed; stroke: #ea580c; stroke-width: 2; rx: 10; }
+      .line { stroke: #334155; stroke-width: 2.5; fill: none; marker-end: url(#arrow); }
+      .dash { stroke: #64748b; stroke-width: 2; stroke-dasharray: 6 6; fill: none; }
+    </style>
+  </defs>
+
+  <rect x="0" y="0" width="1120" height="620" fill="#f8fafc"/>
+  <text x="560" y="44" text-anchor="middle" class="title">Parallelism은 모델을 여러 GPU에 나누는 방법이다</text>
+
+  <rect x="50" y="80" width="480" height="450" class="box"/>
+  <text x="290" y="118" text-anchor="middle" class="section">Tensor parallelism</text>
+  <text x="290" y="146" text-anchor="middle" class="small">한 layer 안의 큰 계산을 여러 GPU가 나누어 처리</text>
+
+  <rect x="100" y="185" width="380" height="90" class="layer"/>
+  <text x="290" y="220" text-anchor="middle" class="label">하나의 큰 Transformer layer</text>
+  <text x="290" y="247" text-anchor="middle" class="small">행렬 계산을 여러 조각으로 나눔</text>
+
+  <path d="M 290 275 L 290 318" class="line"/>
+
+  <rect x="85" y="330" width="125" height="86" class="gpu"/>
+  <text x="147" y="362" text-anchor="middle" class="label">GPU 0</text>
+  <text x="147" y="388" text-anchor="middle" class="tiny">계산 조각 A</text>
+
+  <rect x="227" y="330" width="125" height="86" class="gpu"/>
+  <text x="289" y="362" text-anchor="middle" class="label">GPU 1</text>
+  <text x="289" y="388" text-anchor="middle" class="tiny">계산 조각 B</text>
+
+  <rect x="370" y="330" width="125" height="86" class="gpu"/>
+  <text x="432" y="362" text-anchor="middle" class="label">GPU 2</text>
+  <text x="432" y="388" text-anchor="middle" class="tiny">계산 조각 C</text>
+
+  <path d="M 148 416 L 148 455 L 432 455 L 432 416" class="dash"/>
+  <text x="290" y="486" text-anchor="middle" class="small">GPU 사이 통신 속도가 중요하다</text>
+
+  <rect x="590" y="80" width="480" height="450" class="box"/>
+  <text x="830" y="118" text-anchor="middle" class="section">Pipeline parallelism</text>
+  <text x="830" y="146" text-anchor="middle" class="small">모델 layer 구간을 GPU별 stage로 나누어 배치</text>
+
+  <rect x="638" y="185" width="125" height="86" class="stage"/>
+  <text x="700" y="217" text-anchor="middle" class="label">GPU 0</text>
+  <text x="700" y="243" text-anchor="middle" class="tiny">앞쪽 layer</text>
+
+  <rect x="780" y="185" width="125" height="86" class="stage"/>
+  <text x="842" y="217" text-anchor="middle" class="label">GPU 1</text>
+  <text x="842" y="243" text-anchor="middle" class="tiny">중간 layer</text>
+
+  <rect x="922" y="185" width="125" height="86" class="stage"/>
+  <text x="984" y="217" text-anchor="middle" class="label">GPU 2</text>
+  <text x="984" y="243" text-anchor="middle" class="tiny">뒤쪽 layer</text>
+
+  <path d="M 763 228 L 778 228" class="line"/>
+  <path d="M 905 228 L 920 228" class="line"/>
+
+  <rect x="640" y="325" width="390" height="118" class="note"/>
+  <text x="835" y="360" text-anchor="middle" class="label">요청은 stage를 순서대로 통과한다</text>
+  <text x="835" y="389" text-anchor="middle" class="small">앞 stage가 끝나야 다음 stage가 이어서 처리한다</text>
+  <text x="835" y="418" text-anchor="middle" class="small">batch 흐름이 맞지 않으면 대기 시간이 생길 수 있다</text>
+
+  <path d="M 700 271 L 700 310 L 835 310 L 835 323" class="line"/>
+  <path d="M 842 271 L 842 323" class="line"/>
+  <path d="M 984 271 L 984 310 L 835 310" class="line"/>
+
+  <rect x="130" y="555" width="860" height="42" fill="#e2e8f0" stroke="#cbd5e1" rx="10"/>
+  <text x="560" y="582" text-anchor="middle" class="small">처음에는 단일 GPU → tensor parallelism → tensor + pipeline parallelism 순서로 검토한다</text>
+</svg>

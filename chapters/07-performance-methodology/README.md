@@ -5,7 +5,7 @@
 
 성능 테스트 도구와 vLLM benchmark script는 업데이트될 수 있다.  
 이 문서는 2026-06-30 기준 공식 문서를 바탕으로 작성했다.  
-실습 전 [references.md](references.md)의 공식 문서를 다시 확인한다.
+핵심 공식 문서는 본문에 바로 연결해 두고, 전체 목록은 [references.md](references.md)에 모아 둔다.
 
 ## 학습 목표
 
@@ -22,7 +22,7 @@
 
 1. [../../GLOSSARY.md](../../GLOSSARY.md)에서 performance 관련 용어를 확인한다.
 2. 아래 핵심 개념 요약을 읽는다.
-3. [references.md](references.md)에서 공식 문서와 도구별 확인 지점을 본다.
+3. [공식 문서 바로가기](#공식-문서-바로가기)에서 benchmark 도구별 확인 지점을 본다.
 4. benchmark 대상 server를 다시 실행한다. 예: 챕터 4/5의 vLLM 또는 챕터 6의 NIM.
 5. [scripts/01_check_env.sh](scripts/01_check_env.sh)로 client 환경과 endpoint를 확인한다.
 6. Python `.venv`를 만들고 dependency를 설치한다.
@@ -33,6 +33,18 @@
 11. [scripts/06_summarize_results.sh](scripts/06_summarize_results.sh)로 CSV 결과를 요약한다.
 12. [scripts/07_collect_context.sh](scripts/07_collect_context.sh)로 server log, GPU 상태, endpoint 정보를 함께 기록한다.
 13. [scripts/08_cleanup.sh](scripts/08_cleanup.sh)와 [templates/lab-notes.md](templates/lab-notes.md)를 보며 실습을 마무리한다.
+
+## 공식 문서 바로가기
+
+| 문서 | 바로 볼 부분 |
+| --- | --- |
+| [vLLM Benchmarking](https://docs.vllm.ai/en/latest/contributing/benchmarks.html) | vLLM benchmark script 종류와 serving benchmark 관점 |
+| [vLLM Production Metrics](https://docs.vllm.ai/en/latest/usage/metrics.html) | latency, throughput, scheduler, cache metric |
+| [OpenAI Chat Completions API](https://platform.openai.com/docs/api-reference/chat/create) | OpenAI-compatible request/response 구조 비교 |
+| [k6 HTTP metrics](https://grafana.com/docs/k6/latest/using-k6/metrics/reference/) | HTTP load test 기본 latency, request rate, failure metric |
+| [Locust documentation](https://docs.locust.io/) | Python으로 user behavior 기반 load test 작성 |
+| [hey](https://github.com/rakyll/hey) | 단순 HTTP endpoint 부하 CLI |
+| [wrk](https://github.com/wg/wrk) | thread/connection/duration 기반 HTTP benchmark |
 
 ## 실행 환경 기준
 

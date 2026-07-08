@@ -185,6 +185,7 @@
 | Chunked Prefill | 청크 단위 프리필 | Serving Engine | prefill, scheduling, latency | [05](chapters/05-vllm-performance-tuning/README.md) | 긴 prompt prefill을 작은 조각으로 나누어 decode 작업과 섞어 처리하는 scheduling 최적화 |
 | Quantization | 양자화 | LLM Internals | quantization, memory, inference | [05](chapters/05-vllm-performance-tuning/README.md) | weight나 activation precision을 낮춰 memory 사용량과 계산 비용을 줄이는 기법. 품질/속도 trade-off가 있다. |
 | Tensor Parallelism | 텐서 병렬화 | GPU & Runtime | multi-gpu, parallelism, tensor | [05](chapters/05-vllm-performance-tuning/README.md) | 큰 model tensor를 여러 GPU에 나누어 올리고 계산하는 병렬화 방식 |
+| Pipeline Parallelism | 파이프라인 병렬화 | GPU & Runtime | multi-gpu, multi-node, parallelism, inference | [13](chapters/13-advanced-serving-topics/README.md) | serving에서는 모델 layer 구간을 여러 GPU/node에 나누어 배치하고 하나의 요청이 stage를 순서대로 통과하게 하는 분산 inference 방식. training의 pipeline parallelism과 달리 forward 계산 중심이다. |
 | Max Num Seqs | 최대 sequence 수 | Serving Engine | vllm, batching, scheduler | [05](chapters/05-vllm-performance-tuning/README.md) | vLLM scheduler가 동시에 처리할 수 있는 sequence 수의 상한을 정하는 option |
 | Max Num Batched Tokens | 최대 batch token 수 | Serving Engine | vllm, batching, tokens | [05](chapters/05-vllm-performance-tuning/README.md) | 한 scheduler iteration에서 batch로 묶을 수 있는 token 수의 상한을 정하는 option |
 | Request Lifecycle | 요청 생명주기 | Serving Engine | request, scheduler, lifecycle | [05](chapters/05-vllm-performance-tuning/README.md) | 요청이 waiting, prefill, decode, finished 같은 상태를 거쳐 응답 완료에 이르는 흐름 |

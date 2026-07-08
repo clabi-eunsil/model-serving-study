@@ -3,13 +3,44 @@
 ## Sources
 
 - KServe Quickstart Guide: https://kserve.github.io/website/docs/getting-started/quickstart-guide
+- KServe Standard mode installation: https://kserve.github.io/website/docs/admin-guide/kubernetes-deployment
+- KServe Knative mode installation: https://kserve.github.io/website/docs/admin-guide/serverless
 - KServe Architecture: https://kserve.github.io/website/docs/concepts/architecture
 - KServe Resources: https://kserve.github.io/website/docs/concepts/resources
 - Predictive InferenceService tutorial: https://kserve.github.io/website/docs/getting-started/predictive-first-isvc
 - Knative serverless installation guide: https://kserve.github.io/website/docs/admin-guide/serverless
 - ServingRuntime resources: https://kserve.github.io/website/docs/concepts/resources/servingruntime
 
-## Environment
+## KServe 설치
+
+이번 스터디의 기본 선택은 KServe Quickstart standard mode다.
+
+설치 명령 확인:
+
+```bash
+bash scripts/00_install_kserve_quickstart_standard.sh
+```
+
+실제 설치:
+
+```bash
+CONFIRM_INSTALL_KSERVE=true \
+bash scripts/00_install_kserve_quickstart_standard.sh
+```
+
+예상 관찰:
+
+| 항목 | 의미 | 정상/주의 기준 |
+| --- | --- | --- |
+| 현재 context | KServe를 설치할 cluster | 개인 minikube/kind인지, 원격 공유 cluster인지 반드시 확인 |
+| official install URL | KServe release script | `v0.18.0` standard mode script인지 확인 |
+| `CONFIRM_INSTALL_KSERVE` | 실제 설치 여부 | 기본값은 dry-run, `true`일 때만 설치 |
+| 설치 후 CRD | KServe API 확장 여부 | `inferenceservices.serving.kserve.io`가 보여야 함 |
+| 설치 후 runtime | 기본 runtime 설치 여부 | sklearn 계열 runtime이 보여야 이번 장 예제 가능 |
+
+공유 cluster에서는 이 스크립트를 바로 실행하지 않는다. KServe 설치는 cluster 전체 CRD와 controller를 바꾸는 작업이다.
+
+## 실행 환경
 
 ```bash
 cd ~/study/model-serving/chapters/11-kserve-intro
@@ -113,6 +144,16 @@ bash scripts/08_check_autoscaling.sh
 standard mode에서는 scale-to-zero 리소스가 보이지 않을 수 있다.
 그 경우에도 이상한 것이 아니라 설치 mode 차이다.
 
+mode별로 다르게 보이는 이유:
+
+| mode | 왜 다르게 보이나 |
+| --- | --- |
+| Standard mode | Kubernetes `Deployment`와 Pod가 중심이라 Knative `ksvc`, `revision`, `kpa`가 없을 수 있다. |
+| Knative mode | Knative가 request 기반 autoscaling과 scale-to-zero를 담당하므로 Knative 관련 리소스가 함께 보인다. |
+
+작은 sklearn 모델에서는 scale-to-zero 후 다시 뜨는 시간이 짧을 수 있다.
+하지만 LLM은 model download, GPU loading, KV cache 준비 때문에 같은 전략을 그대로 쓰면 첫 요청 지연이 커질 수 있다.
+
 ## Common Errors
 
 | 증상 | 먼저 확인할 것 |
@@ -125,7 +166,7 @@ standard mode에서는 scale-to-zero 리소스가 보이지 않을 수 있다.
 | curl 404/503 | Host header, gateway port-forward, `status.url` hostname |
 | autoscaling 리소스가 없음 | standard mode인지 Knative mode인지 확인 |
 
-## Cleanup
+## 정리
 
 ```bash
 bash scripts/09_cleanup.sh

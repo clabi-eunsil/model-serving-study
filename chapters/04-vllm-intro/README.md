@@ -5,7 +5,7 @@
 
 vLLM은 업데이트가 빠른 프로젝트다.  
 이 문서는 2026-06-22 기준 공식 stable 문서를 바탕으로 작성했다.  
-설치 방법, Docker image tag, 지원 model, 옵션 이름은 바뀔 수 있으므로 실습 전 [references.md](references.md)의 공식 문서를 다시 확인한다.
+설치 방법, Docker image tag, 지원 model, 옵션 이름은 바뀔 수 있으므로 핵심 공식 문서는 본문에 바로 연결해 두고, 전체 목록은 [references.md](references.md)에 모아 둔다.
 
 ## 학습 목표
 
@@ -20,15 +20,27 @@ vLLM은 업데이트가 빠른 프로젝트다.
 
 1. [../../GLOSSARY.md](../../GLOSSARY.md)에서 챕터 4 용어를 확인한다.
 2. 아래 핵심 개념 요약을 읽는다.
-3. [scripts/01_check_env.sh](scripts/01_check_env.sh)로 Docker/GPU/client 환경을 확인한다.
-4. [scripts/02_run_vllm_docker.sh](scripts/02_run_vllm_docker.sh)로 vLLM server를 실행한다.
-5. [scripts/03_list_models.sh](scripts/03_list_models.sh)로 OpenAI-compatible server가 뜬 것을 확인한다.
-6. [scripts/04_curl_chat.sh](scripts/04_curl_chat.sh)로 non-streaming chat completions를 호출한다.
-7. [scripts/05_curl_chat_stream.sh](scripts/05_curl_chat_stream.sh)로 streaming 응답을 확인한다.
-8. client `.venv`를 만든 뒤 [client/06_openai_client.py](client/06_openai_client.py)를 실행한다.
-9. [scripts/07_collect_runtime_info.sh](scripts/07_collect_runtime_info.sh)로 server 상태를 기록한다.
-10. [scripts/08_stop_server.sh](scripts/08_stop_server.sh)로 container를 종료한다.
-11. 결과를 [templates/lab-notes.md](templates/lab-notes.md)와 비교한다.
+3. [공식 문서 바로가기](#공식-문서-바로가기)에서 vLLM Docker, OpenAI-compatible API, model 확인 위치를 본다.
+4. [scripts/01_check_env.sh](scripts/01_check_env.sh)로 Docker/GPU/client 환경을 확인한다.
+5. [scripts/02_run_vllm_docker.sh](scripts/02_run_vllm_docker.sh)로 vLLM server를 실행한다.
+6. [scripts/03_list_models.sh](scripts/03_list_models.sh)로 OpenAI-compatible server가 뜬 것을 확인한다.
+7. [scripts/04_curl_chat.sh](scripts/04_curl_chat.sh)로 non-streaming chat completions를 호출한다.
+8. [scripts/05_curl_chat_stream.sh](scripts/05_curl_chat_stream.sh)로 streaming 응답을 확인한다.
+9. client `.venv`를 만든 뒤 [client/06_openai_client.py](client/06_openai_client.py)를 실행한다.
+10. [scripts/07_collect_runtime_info.sh](scripts/07_collect_runtime_info.sh)로 server 상태를 기록한다.
+11. [scripts/08_stop_server.sh](scripts/08_stop_server.sh)로 container를 종료한다.
+12. 결과를 [templates/lab-notes.md](templates/lab-notes.md)와 비교한다.
+
+## 공식 문서 바로가기
+
+| 문서 | 바로 볼 부분 |
+| --- | --- |
+| [vLLM stable docs](https://docs.vllm.ai/en/stable/) | 현재 stable 문서와 latest 문서 차이 |
+| [vLLM Docker deployment](https://docs.vllm.ai/en/stable/deployment/docker/) | `vllm/vllm-openai`, `--gpus all`, cache mount, `--ipc=host` |
+| [vLLM OpenAI-compatible server](https://docs.vllm.ai/en/stable/serving/openai_compatible_server/) | `/v1/models`, `/v1/chat/completions`, OpenAI SDK 연결 |
+| [vLLM engine arguments](https://docs.vllm.ai/en/stable/configuration/engine_args/) | `--model`, `--served-model-name`, `--gpu-memory-utilization`, `--max-model-len` |
+| [vLLM supported models](https://docs.vllm.ai/en/stable/models/supported_models/) | 사용하려는 Hugging Face model architecture 지원 여부 |
+| [Hugging Face Models](https://huggingface.co/models) | model repository id, model card, license, gated/private 여부 |
 
 ## 실행 환경 기준
 
