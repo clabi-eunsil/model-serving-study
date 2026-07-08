@@ -1,0 +1,16 @@
+{
+  "model": "advanced-model",
+  "messages": [
+    {
+      "role": "system",
+      "content": "You are a helpful assistant. Explain model serving concepts in Korean for a beginner."
+    },
+    {
+      "role": "user",
+      "content": "LLM serving에서 quantization과 LoRA가 각각 어떤 문제를 해결하는지 짧게 설명해줘."
+    }
+  ],
+  "max_tokens": 220,
+  "temperature": 0.2,
+  "stream": false
+}
