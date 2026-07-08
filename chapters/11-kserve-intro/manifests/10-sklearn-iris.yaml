@@ -1,0 +1,31 @@
+# KServe의 핵심 리소스인 InferenceService 예제다.
+#
+# 챕터 10에서는 Deployment, Service, Ingress를 직접 만들었다.
+# 여기서는 "어떤 모델을 어떤 runtime으로 serving할지"만 선언하고,
+# 나머지 Kubernetes object 생성은 KServe control plane에 맡긴다.
+apiVersion: serving.kserve.io/v1beta1
+kind: InferenceService
+metadata:
+  name: sklearn-iris
+  namespace: kserve-test
+spec:
+  predictor:
+    model:
+      # modelFormat은 KServe가 어떤 ServingRuntime을 선택할지 판단하는 힌트다.
+      # cluster에 sklearn을 지원하는 ClusterServingRuntime이 있어야 한다.
+      modelFormat:
+        name: sklearn
+      # 공식 KServe quickstart에서 사용하는 public sklearn iris model 위치다.
+      # storage initializer가 이 위치에서 model artifact를 받아 predictor container에 전달한다.
+      storageUri: "gs://kfserving-examples/models/sklearn/1.0/model"
+      resources:
+        requests:
+          # 작은 sklearn 모델이라 CPU/memory request를 작게 잡는다.
+          # scheduler는 request를 보고 어느 node에 Pod를 배치할지 결정한다.
+          cpu: "100m"
+          memory: "512Mi"
+        limits:
+          # limit은 container가 사용할 수 있는 상한이다.
+          # memory limit을 넘으면 OOMKilled될 수 있다.
+          cpu: "1"
+          memory: "1Gi"

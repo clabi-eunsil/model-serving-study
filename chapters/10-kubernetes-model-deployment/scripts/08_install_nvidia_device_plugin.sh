@@ -27,8 +27,21 @@ fi
 case "${INSTALL_METHOD}" in
   helm)
     # Helm 방식은 chart 버전과 values로 설치 상태를 관리하기 쉬워 production 문서에서 자주 권장된다.
+    #
+    # helm repo add:
+    #   Helm chart 저장소를 local Helm 설정에 등록한다.
+    #   여기서는 NVIDIA device plugin chart 저장소를 nvdp라는 짧은 이름으로 등록한다.
     helm repo add nvdp https://nvidia.github.io/k8s-device-plugin
+
+    # helm repo update:
+    #   등록된 chart 저장소의 index를 최신으로 가져온다.
+    #   apt update가 package 목록을 새로 받는 것과 비슷하게 이해하면 된다.
     helm repo update
+
+    # helm upgrade -i:
+    #   release가 이미 있으면 upgrade하고, 없으면 install한다.
+    #   nvdp는 release 이름이고, nvdp/nvidia-device-plugin은 설치할 chart 이름이다.
+    #   --namespace는 설치 위치, --create-namespace는 namespace가 없을 때 자동 생성 옵션이다.
     helm upgrade -i nvdp nvdp/nvidia-device-plugin \
       --version "${PLUGIN_VERSION}" \
       --namespace nvidia-device-plugin \
