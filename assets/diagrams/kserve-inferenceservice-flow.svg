@@ -1,6 +1,6 @@
 <svg xmlns="http://www.w3.org/2000/svg" width="1200" height="760" viewBox="0 0 1200 760" role="img" aria-labelledby="title desc">
   <title id="title">KServe InferenceService 흐름</title>
-  <desc id="desc">사용자가 InferenceService를 적용하면 KServe control plane이 predictor runtime과 Kubernetes 리소스를 만들고, client 요청이 gateway와 service를 거쳐 predictor pod로 전달되는 흐름</desc>
+  <desc id="desc">KServe InferenceService의 배포 준비 흐름과 배포 후 요청 처리 흐름을 분리해 보여주는 다이어그램</desc>
   <defs>
     <marker id="arrow" markerWidth="12" markerHeight="12" refX="10" refY="6" orient="auto">
       <path d="M2,2 L10,6 L2,10 Z" fill="#334155"/>
@@ -29,10 +29,10 @@
 
   <rect class="bg" width="1200" height="760"/>
   <text x="52" y="52" class="title">Chapter 11 KServe InferenceService 흐름</text>
-  <text x="52" y="82" class="small">위쪽은 선언형 배포 흐름, 아래쪽은 inference 요청 흐름이다.</text>
+  <text x="52" y="82" class="small">A는 배포 준비 단계이고, B는 배포가 Ready 된 뒤의 요청 처리 단계다.</text>
 
   <rect x="36" y="112" width="1128" height="260" class="lane"/>
-  <text x="62" y="146" class="section">A. 선언형 배포 흐름</text>
+  <text x="62" y="146" class="section">A. 배포 준비 흐름: InferenceService 적용 후 KServe가 리소스를 준비한다</text>
 
   <rect x="76" y="190" width="210" height="96" class="user"/>
   <text x="104" y="224" class="label">YAML apply</text>
@@ -40,13 +40,13 @@
   <text x="104" y="274" class="tiny">predictor.model.storageUri</text>
 
   <rect x="362" y="190" width="220" height="96" class="kserve"/>
-  <text x="390" y="224" class="label">KServe controller</text>
+  <text x="390" y="224" class="label">KServe Control</text>
   <text x="390" y="252" class="small">CRD 상태 조정</text>
-  <text x="390" y="274" class="tiny">desired state -> actual state</text>
+  <text x="390" y="274" class="tiny">원하는 상태를 실제 상태로</text>
 
   <rect x="664" y="190" width="210" height="96" class="runtime"/>
   <text x="692" y="224" class="label">ServingRuntime</text>
-  <text x="692" y="252" class="small">sklearn runtime 선택</text>
+  <text x="692" y="252" class="small">sklearn 선택</text>
   <text x="692" y="274" class="tiny">built-in or custom</text>
 
   <rect x="954" y="190" width="190" height="96" class="runtime"/>
@@ -68,7 +68,7 @@
   <path class="attach" d="M769 306 V286"/>
 
   <rect x="36" y="400" width="1128" height="260" class="lane"/>
-  <text x="62" y="434" class="section">B. 요청 호출 흐름</text>
+  <text x="62" y="434" class="section">B. 요청 처리 흐름: 배포 완료 후 client 요청이 predictor로 들어간다</text>
 
   <rect x="76" y="488" width="190" height="82" class="user"/>
   <text x="116" y="522" class="label">Client</text>
@@ -80,7 +80,7 @@
 
   <rect x="654" y="488" width="210" height="82" class="kserve"/>
   <text x="692" y="522" class="label">KServe route</text>
-  <text x="692" y="548" class="tiny">Host header로 서비스 선택</text>
+  <text x="692" y="548" class="tiny">Host header로 선택</text>
 
   <rect x="954" y="488" width="190" height="82" class="runtime"/>
   <text x="988" y="522" class="label">Predictor</text>
@@ -95,8 +95,10 @@
   <circle cx="909" cy="529" r="14" class="badge"/><text x="904" y="534" class="num">6</text>
 
   <rect x="356" y="600" width="210" height="44" class="optional"/>
-  <text x="394" y="627" class="tiny">Knative mode이면 autoscaling/scale-to-zero가 함께 동작</text>
+  <text x="394" y="620" class="tiny">Knative mode:</text>
+  <text x="394" y="638" class="tiny">autoscaling / scale-to-zero</text>
 
   <rect x="52" y="696" width="1096" height="42" fill="#ffffff" stroke="#cbd5e1" stroke-width="1.4" rx="8"/>
-  <text x="70" y="722" class="tiny">1 InferenceService 선언, 2 controller가 조정, 3 runtime/pod 생성, 4 client 요청, 5 gateway/route, 6 predictor가 응답. transformer/explainer는 predictor 앞뒤에 추가될 수 있다.</text>
+  <text x="70" y="716" class="tiny">A: 1 InferenceService 선언, 2 controller 조정, 3 runtime/pod 준비.</text>
+  <text x="70" y="734" class="tiny">B: 4 client 요청, 5 gateway/route, 6 predictor 응답. transformer/explainer는 predictor 앞뒤에 붙을 수 있다.</text>
 </svg>
