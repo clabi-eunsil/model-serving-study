@@ -1,0 +1,16 @@
+name: Notify hosting site
+
+on:
+  push:
+    branches: [main]
+
+jobs:
+  dispatch:
+    runs-on: ubuntu-latest
+    steps:
+      - run: |
+          curl -sSf -X POST \
+            -H "Authorization: token ${{ secrets.HOSTING_DISPATCH_TOKEN }}" \
+            -H "Accept: application/vnd.github.v3+json" \
+            https://api.github.com/repos/clabi-eunsil/study-docs/dispatches \
+            -d '{"event_type":"content-updated"}'
