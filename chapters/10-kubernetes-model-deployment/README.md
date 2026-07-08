@@ -573,10 +573,17 @@ minikube delete -p model-serving
 
 ## 확인 질문
 
-- Deployment와 Pod를 직접 만드는 방식의 차이는 무엇인가?
-- Service가 없으면 Pod IP로 직접 호출할 때 어떤 문제가 생기는가?
-- Ingress object와 Ingress controller는 왜 둘 다 필요한가?
-- GPU node에 `nvidia.com/gpu`가 보이지 않는다면 어느 계층부터 확인해야 하는가?
-- `nodeSelector`와 toleration은 각각 어떤 방향의 제약인가?
-- 모델 로딩이 5분 걸리는 서버에서 liveness probe를 너무 짧게 두면 어떤 일이 생기는가?
-- PVC를 쓰면 image size와 cold start에 어떤 영향을 줄 수 있는가?
+| 질문 | 정리 |
+| --- | --- |
+| Deployment와 Pod를 직접 만드는 방식의 차이는 무엇인가? | Pod를 직접 만들면 죽었을 때 복구, replica 유지, rolling update를 직접 관리해야 한다. Deployment는 Pod template과 replica 수를 선언하고 ReplicaSet을 통해 원하는 상태를 유지한다. |
+| Service가 없으면 Pod IP로 직접 호출할 때 어떤 문제가 생기는가? | Pod IP는 재시작이나 교체 때 바뀔 수 있다. Service는 바뀌는 Pod IP 앞에 안정적인 DNS 이름과 virtual IP를 제공한다. |
+| Ingress object와 Ingress controller는 왜 둘 다 필요한가? | Ingress object는 HTTP routing 규칙 선언이고, Ingress controller는 그 규칙을 실제 proxy/load balancer 설정으로 반영하는 실행 주체다. object만 만들면 traffic이 자동으로 들어오지 않는다. |
+| GPU node에 `nvidia.com/gpu`가 보이지 않는다면 어느 계층부터 확인해야 하는가? | host NVIDIA driver, container runtime, NVIDIA device plugin Pod, node allocatable resource 순서로 확인한다. managed Kubernetes라면 GPU node image나 GPU operator 설치 여부도 확인한다. |
+| `nodeSelector`와 toleration은 각각 어떤 방향의 제약인가? | `nodeSelector`는 Pod가 특정 label을 가진 node를 선택하는 조건이다. toleration은 taint가 있는 node에도 해당 Pod가 배치될 수 있음을 허용하는 조건이다. |
+| 모델 로딩이 5분 걸리는 서버에서 liveness probe를 너무 짧게 두면 어떤 일이 생기는가? | 모델이 뜨기 전에 kubelet이 container를 계속 재시작할 수 있다. 긴 model loading에는 startupProbe를 길게 두고, readinessProbe로 traffic 투입 시점을 제어하는 편이 안전하다. |
+| PVC를 쓰면 image size와 cold start에 어떤 영향을 줄 수 있는가? | 모델 파일을 image에 넣지 않아 image size를 줄일 수 있고, Pod 재시작 후 cache를 재사용해 download 시간을 줄일 수 있다. 다만 첫 다운로드와 여러 replica의 cache 공유 방식은 별도로 설계해야 한다. |
+
+## 다음 챕터에서 이어질 내용
+
+이번 챕터에서는 Kubernetes 기본 리소스를 직접 조합해 모델 서버를 배포했다.  
+다음 챕터에서는 KServe를 사용해 `Deployment`, `Service`, runtime 선택, routing 같은 반복 패턴을 `InferenceService`라는 모델 서빙용 리소스로 추상화하는 방법을 배운다.

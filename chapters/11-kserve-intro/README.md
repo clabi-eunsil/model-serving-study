@@ -335,11 +335,18 @@ deactivate
 
 ## 확인 질문
 
-- KServe는 Kubernetes를 대체하는가, 아니면 Kubernetes 위에 model serving abstraction을 추가하는가?
-- `InferenceService`와 일반 `Deployment`의 선언 관점은 어떻게 다른가?
-- `predictor`, `transformer`, `explainer` 중 이번 실습에서 실제로 쓴 것은 무엇인가?
-- `modelFormat.name`은 왜 필요한가?
-- `storageUri`가 잘못되면 어떤 단계에서 실패할까?
-- built-in runtime과 custom runtime은 언제 각각 선택할까?
-- Knative mode의 scale-to-zero는 어떤 workload에 유리하고, LLM에는 왜 조심해야 할까?
-- gateway 호출에서 `Host` header가 필요한 이유는 무엇인가?
+| 질문 | 정리 |
+| --- | --- |
+| KServe는 Kubernetes를 대체하는가, 아니면 Kubernetes 위에 model serving abstraction을 추가하는가? | Kubernetes를 대체하지 않는다. KServe는 Kubernetes 위에 `InferenceService`, `ServingRuntime` 같은 CRD와 controller를 추가해 모델 서빙 패턴을 더 선언적으로 다루게 해 준다. |
+| `InferenceService`와 일반 `Deployment`의 선언 관점은 어떻게 다른가? | Deployment는 container image, replica, probe 같은 Pod 실행 방식을 직접 선언한다. InferenceService는 모델 format, storage URI, predictor 같은 모델 서빙 의도를 선언하고, KServe가 runtime과 하위 리소스를 준비한다. |
+| `predictor`, `transformer`, `explainer` 중 이번 실습에서 실제로 쓴 것은 무엇인가? | 이번 실습에서는 predictor만 사용했다. predictor는 실제 모델 추론을 수행하는 component다. transformer는 전처리/후처리, explainer는 예측 설명을 위한 component다. |
+| `modelFormat.name`은 왜 필요한가? | KServe가 이 모델을 어떤 ServingRuntime으로 실행할지 판단하는 힌트다. 예를 들어 `sklearn`이면 sklearn을 지원하는 runtime을 선택해야 한다. |
+| `storageUri`가 잘못되면 어떤 단계에서 실패할까? | storage initializer 또는 predictor Pod 시작 단계에서 모델 artifact를 가져오지 못해 Ready가 되지 않는다. 이때 InferenceService describe, Pod event, init container logs를 확인한다. |
+| built-in runtime과 custom runtime은 언제 각각 선택할까? | sklearn, xgboost, triton처럼 KServe가 제공하는 framework면 built-in runtime으로 시작한다. 사내 모델 서버, 특수 API, custom preprocessing이 필요하면 custom runtime을 정의한다. |
+| Knative mode의 scale-to-zero는 어떤 workload에 유리하고, LLM에는 왜 조심해야 할까? | 요청이 드문 CPU predictive model에는 비용 절감에 유리하다. 하지만 LLM은 model loading 시간이 길고 GPU 자원을 쓰므로 scale-to-zero 후 cold start가 매우 커질 수 있다. |
+| gateway 호출에서 `Host` header가 필요한 이유는 무엇인가? | local port-forward에서는 TCP 연결 대상이 `127.0.0.1`이지만, gateway는 Host header를 보고 어떤 InferenceService route로 보낼지 결정한다. 그래서 status.url의 hostname을 Host header로 넣어야 한다. |
+
+## 다음 챕터에서 이어질 내용
+
+이번 챕터에서는 sklearn 같은 작은 predictive model로 KServe의 기본 추상화를 익혔다.  
+다음 챕터에서는 KServe로 LLM을 serving할 때 달라지는 점을 다룬다. 특히 vLLM custom runtime, Hugging Face model URI, storage initializer, GPU resource request, OpenAI-compatible endpoint, autoscaling 정책을 챕터 10/11에서 배운 개념과 연결해 본다.
