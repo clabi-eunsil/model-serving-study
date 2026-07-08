@@ -1,0 +1,7 @@
+apiVersion: v1
+kind: Namespace
+metadata:
+  # KServe 공식 문서는 control-plane label이 붙은 namespace에 InferenceService를
+  # 배포하지 말라고 안내한다. 그런 namespace에서는 storage initializer가
+  # 주입되지 않아 모델 다운로드 단계에서 실패할 수 있다.
+  name: kserve-llm

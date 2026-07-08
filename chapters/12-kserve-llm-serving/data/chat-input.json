@@ -1,0 +1,16 @@
+{
+  "model": "qwen",
+  "messages": [
+    {
+      "role": "system",
+      "content": "You are a helpful assistant. Answer in Korean for a beginner studying model serving."
+    },
+    {
+      "role": "user",
+      "content": "KServe로 LLM을 서빙할 때 vLLM이 어떤 역할을 하는지 짧게 설명해줘."
+    }
+  ],
+  "max_tokens": 180,
+  "temperature": 0.2,
+  "stream": false
+}

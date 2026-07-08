@@ -1,0 +1,127 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1500" height="920" viewBox="0 0 1500 920" role="img" aria-labelledby="title desc">
+  <title id="title">KServe LLM serving flow</title>
+  <desc id="desc">A clean diagram showing KServe LLM deployment preparation and request flow without overlapping lines or text.</desc>
+  <defs>
+    <marker id="arrow" markerWidth="10" markerHeight="10" refX="8" refY="5" orient="auto" markerUnits="strokeWidth">
+      <path d="M 0 0 L 10 5 L 0 10 z" fill="#334155"/>
+    </marker>
+    <style>
+      .page { fill: #f8fafc; }
+      .lane { fill: #ffffff; stroke: #cbd5e1; stroke-width: 1.5; rx: 16; }
+      .blue { fill: #eff6ff; stroke: #2563eb; stroke-width: 1.6; rx: 12; }
+      .green { fill: #ecfdf5; stroke: #059669; stroke-width: 1.6; rx: 12; }
+      .orange { fill: #fff7ed; stroke: #ea580c; stroke-width: 1.6; rx: 12; }
+      .yellow { fill: #fefce8; stroke: #ca8a04; stroke-width: 1.6; rx: 12; }
+      .legend { fill: #f1f5f9; stroke: #94a3b8; stroke-width: 1.2; rx: 10; }
+      .edgeLabel { fill: #ffffff; stroke: #cbd5e1; stroke-width: 1.1; rx: 8; }
+      .mainLine { fill: none; stroke: #334155; stroke-width: 2.4; marker-end: url(#arrow); }
+      .sideLine { fill: none; stroke: #64748b; stroke-width: 2; stroke-dasharray: 7 6; marker-end: url(#arrow); }
+      .laneTitle { font-family: Arial, sans-serif; fill: #0f172a; font-size: 23px; font-weight: 700; }
+      .boxTitle { font-family: Arial, sans-serif; fill: #111827; font-size: 18px; font-weight: 700; }
+      .boxText { font-family: Arial, sans-serif; fill: #374151; font-size: 15px; }
+      .edgeText { font-family: Arial, sans-serif; fill: #334155; font-size: 13px; font-weight: 700; }
+      .legendText { font-family: Arial, sans-serif; fill: #334155; font-size: 14px; }
+      .numCircle { fill: #111827; }
+      .num { font-family: Arial, sans-serif; fill: #ffffff; font-size: 15px; font-weight: 700; }
+    </style>
+  </defs>
+
+  <rect class="page" x="0" y="0" width="1500" height="920"/>
+
+  <!-- A. deployment lane -->
+  <rect class="lane" x="46" y="40" width="1408" height="388"/>
+  <text class="laneTitle" x="78" y="84">A. 배포 준비 흐름</text>
+
+  <rect class="blue" x="82" y="172" width="250" height="130"/>
+  <text class="boxTitle" x="114" y="210">InferenceService</text>
+  <text class="boxText" x="114" y="240">modelFormat</text>
+  <text class="boxText" x="114" y="264">storageUri</text>
+
+  <rect class="green" x="422" y="172" width="250" height="130"/>
+  <text class="boxTitle" x="458" y="210">KServe Controller</text>
+  <text class="boxText" x="458" y="240">runtime 선택</text>
+  <text class="boxText" x="458" y="264">Pod 생성</text>
+
+  <rect class="green" x="1018" y="172" width="250" height="130"/>
+  <text class="boxTitle" x="1058" y="210">Predictor Pod</text>
+  <text class="boxText" x="1058" y="240">HF runtime</text>
+  <text class="boxText" x="1058" y="264">vLLM backend</text>
+
+  <rect class="yellow" x="744" y="78" width="236" height="92"/>
+  <text class="boxTitle" x="782" y="114">Hugging Face Hub</text>
+  <text class="boxText" x="782" y="142">model artifact</text>
+
+  <rect class="orange" x="744" y="310" width="236" height="82"/>
+  <text class="boxTitle" x="800" y="344">GPU request</text>
+  <text class="boxText" x="800" y="370">nvidia.com/gpu</text>
+
+  <rect class="legend" x="82" y="326" width="590" height="62"/>
+  <text class="legendText" x="108" y="354">실선: main 배포 흐름</text>
+  <text class="legendText" x="108" y="378">점선: 모델 저장소와 GPU 조건 같은 보조 입력</text>
+
+  <circle class="numCircle" cx="376" cy="237" r="15"/><text class="num" x="371" y="242">1</text>
+  <path class="mainLine" d="M 332 237 H 422"/>
+  <rect class="edgeLabel" x="338" y="192" width="78" height="28"/>
+  <text class="edgeText" x="352" y="211">YAML 적용</text>
+
+  <circle class="numCircle" cx="734" cy="237" r="15"/><text class="num" x="729" y="242">2</text>
+  <path class="mainLine" d="M 672 237 H 1018"/>
+  <rect class="edgeLabel" x="738" y="192" width="202" height="28"/>
+  <text class="edgeText" x="754" y="211">runtime 선택 후 Pod 준비</text>
+
+  <circle class="numCircle" cx="998" cy="124" r="15"/><text class="num" x="993" y="129">3</text>
+  <path class="sideLine" d="M 980 124 H 1143 V 172"/>
+  <rect class="edgeLabel" x="1008" y="88" width="134" height="28"/>
+  <text class="edgeText" x="1023" y="107">모델 파일 준비</text>
+
+  <circle class="numCircle" cx="998" cy="351" r="15"/><text class="num" x="993" y="356">4</text>
+  <path class="sideLine" d="M 980 351 H 1143 V 302"/>
+  <rect class="edgeLabel" x="1008" y="360" width="142" height="28"/>
+  <text class="edgeText" x="1023" y="379">GPU node 배치</text>
+
+  <!-- B. request lane -->
+  <rect class="lane" x="46" y="478" width="1408" height="362"/>
+  <text class="laneTitle" x="78" y="522">B. 요청 호출 흐름</text>
+
+  <rect class="blue" x="82" y="620" width="220" height="122"/>
+  <text class="boxTitle" x="134" y="658">Client</text>
+  <text class="boxText" x="116" y="688">curl</text>
+  <text class="boxText" x="116" y="712">OpenAI SDK</text>
+
+  <rect class="orange" x="386" y="620" width="230" height="122"/>
+  <text class="boxTitle" x="458" y="658">Gateway</text>
+  <text class="boxText" x="426" y="688">localhost:8080</text>
+  <text class="boxText" x="426" y="712">Host header</text>
+
+  <rect class="green" x="702" y="620" width="270" height="122"/>
+  <text class="boxTitle" x="764" y="658">KServe Route</text>
+  <text class="boxText" x="742" y="688">qwen-llm</text>
+  <text class="boxText" x="742" y="712">/openai/v1</text>
+
+  <rect class="green" x="1058" y="620" width="250" height="122"/>
+  <text class="boxTitle" x="1098" y="658">Predictor Pod</text>
+  <text class="boxText" x="1098" y="688">token 생성</text>
+  <text class="boxText" x="1098" y="712">JSON 응답</text>
+
+  <rect class="legend" x="82" y="552" width="1226" height="42"/>
+  <text class="legendText" x="108" y="578">local port-forward에서는 URL과 함께 Host header가 필요하다. Host header가 어떤 InferenceService로 보낼지 알려준다.</text>
+
+  <circle class="numCircle" cx="344" cy="681" r="15"/><text class="num" x="339" y="686">5</text>
+  <path class="mainLine" d="M 302 681 H 386"/>
+  <rect class="edgeLabel" x="314" y="636" width="64" height="28"/>
+  <text class="edgeText" x="328" y="655">요청</text>
+
+  <circle class="numCircle" cx="660" cy="681" r="15"/><text class="num" x="655" y="686">6</text>
+  <path class="mainLine" d="M 616 681 H 702"/>
+  <rect class="edgeLabel" x="628" y="636" width="66" height="28"/>
+  <text class="edgeText" x="641" y="655">라우팅</text>
+
+  <circle class="numCircle" cx="1016" cy="681" r="15"/><text class="num" x="1011" y="686">7</text>
+  <path class="mainLine" d="M 972 681 H 1058"/>
+  <rect class="edgeLabel" x="990" y="636" width="78" height="28"/>
+  <text class="edgeText" x="1003" y="655">LLM 호출</text>
+
+  <rect class="legend" x="46" y="858" width="1408" height="42"/>
+  <text class="legendText" x="72" y="876">A: 1 InferenceService 적용, 2 KServe가 runtime과 Pod 준비, 3 모델 파일 준비, 4 GPU node 배치 조건 반영.</text>
+  <text class="legendText" x="72" y="894">B: 5 client 요청, 6 gateway와 Host header로 route 선택, 7 predictor Pod의 vLLM backend가 token을 생성해 응답.</text>
+</svg>

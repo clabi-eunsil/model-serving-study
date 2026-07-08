@@ -1,0 +1,38 @@
+apiVersion: serving.kserve.io/v1beta1
+kind: InferenceService
+metadata:
+  # InferenceService 이름은 외부 호출 시 Host header에도 사용된다.
+  # 예: qwen-llm.kserve-llm.example.com
+  name: qwen-llm
+  namespace: kserve-llm
+spec:
+  predictor:
+    model:
+      # KServe 0.18의 generative inference 문서에서는 Hugging Face runtime이
+      # vLLM backend를 사용해 LLM text generation을 처리한다고 설명한다.
+      modelFormat:
+        name: huggingface
+
+      # storageUri는 모델 artifact가 어디 있는지 알려준다.
+      # hf:// prefix는 Hugging Face Hub에서 모델을 가져오겠다는 뜻이다.
+      # private/gated model이면 HF_TOKEN secret 구성이 추가로 필요하다.
+      storageUri: "hf://Qwen/Qwen2.5-0.5B-Instruct"
+
+      # args는 runtime container에 전달되는 실행 옵션이다.
+      # --model_name은 OpenAI-compatible API에서 사용할 model 이름이다.
+      # 즉 요청 JSON의 "model": "qwen"과 맞춰야 한다.
+      args:
+        - --model_name=qwen
+
+      # LLM은 CPU 예제보다 메모리와 GPU 요구량이 훨씬 크다.
+      # nvidia.com/gpu request/limit을 넣으면 GPU node scheduling 대상이 되고,
+      # KServe Hugging Face runtime은 GPU 요청이 있을 때 CUDA image를 선택한다.
+      resources:
+        requests:
+          cpu: "1"
+          memory: 4Gi
+          nvidia.com/gpu: "1"
+        limits:
+          cpu: "2"
+          memory: 6Gi
+          nvidia.com/gpu: "1"
