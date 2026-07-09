@@ -16,6 +16,7 @@ __pycache__/
 .env
 .env.*
 !.env.example
+Agent.md
 
 # Benchmark and generated results
 results/
