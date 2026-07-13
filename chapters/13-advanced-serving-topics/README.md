@@ -218,7 +218,8 @@ Node B: batch job B
 Node C: 다른 모델 서버 C
 ```
 
-이 경우 각 node는 독립적으로 일한다. Node A의 중간 계산 결과를 Node B가 이어받지 않는다.
+이 경우 각 node는 독립적으로 일한다.   
+Node A의 중간 계산 결과를 Node B가 이어받지 않는다.
 
 pipeline parallelism으로 하나의 모델을 나누는 경우:
 
@@ -242,7 +243,7 @@ Node B는 그 activation을 이어받아 다음 layer를 계산한다.
 | 목적 | 여러 작업을 동시에 처리 | 너무 큰 하나의 모델을 나누어 serving |
 | 장애 영향 | 한 job에 주로 영향 | 한 stage가 느리면 전체 요청이 느려짐 |
 
-InfiniBand나 NVLink는 이 중간 결과를 빠르게 주고받기 위한 통신 경로다.  
+InfiniBand나 NVLink는 이 중간 결과를 빠르게 주고받기 위한 통신 경로다.    
 하지만 빠른 네트워크가 있다고 해서 모델이 자동으로 나뉘는 것은 아니다.   
 모델을 tensor 단위로 나눌지, layer 구간으로 나눌지, 둘을 섞을지는 별도의 실행 전략이다.
 
@@ -310,10 +311,10 @@ base model
   + legal-lora     -> 법률 문서 스타일에 특화
 ```
 
-multi-LoRA serving은 하나의 base model server가 여러 LoRA adapter를 함께 serving하는 방식이다.
+multi-LoRA serving은 하나의 base model server가 여러 LoRA adapter를 함께 serving하는 방식이다.  
 장점은 base model weight를 adapter마다 다시 올리지 않아도 된다는 것이다.
 
-vLLM에서는 server 시작 시 `--enable-lora`를 켜고, `--lora-modules name=path` 형태로 adapter를 등록할 수 있다.
+vLLM에서는 server 시작 시 `--enable-lora`를 켜고, `--lora-modules name=path` 형태로 adapter를 등록할 수 있다.  
 요청할 때는 OpenAI-compatible API의 `model` field에 LoRA adapter 이름을 넣어 호출한다.
 
 ```json
@@ -369,8 +370,8 @@ speculative decoding:
   맞는 token들은 그대로 채택
 ```
 
-vLLM 문서는 speculative decoding이 medium-to-low QPS, memory-bound workload에서 inter-token latency를 줄이는 데 도움이 될 수 있다고 설명한다.
-다만 QPS가 높거나 draft model까지 올릴 memory가 부족하면 기대한 만큼 이득이 없을 수 있다.
+vLLM 문서는 speculative decoding이 medium-to-low QPS, memory-bound workload에서 inter-token latency를 줄이는 데 도움이 될 수 있다고 설명한다.  
+다만 QPS가 높거나 draft model까지 올릴 memory가 부족하면 기대한 만큼 이득이 없을 수 있다.  
 
 볼 지표:
 

@@ -1,6 +1,6 @@
 # 3. Docker 기반 모델 서빙
 
-이 단원에서는 챕터 2에서 만든 FastAPI 모델 서버를 Docker image로 만든다.
+이 단원에서는 챕터 2에서 만든 FastAPI 모델 서버를 Docker image로 만든다.  
 목표는 "내 컴퓨터의 Python 환경"에 의존하지 않고, 같은 모델 서버를 container로 실행하는 흐름을 이해하는 것이다.
 
 ## 학습 목표
