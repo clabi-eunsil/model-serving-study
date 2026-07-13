@@ -150,15 +150,17 @@ bash scripts/10_stop_container.sh
 
 ## Environment
 
-기록할 값:
+예상 확인:
 
-- Target server: vLLM / NIM / FastAPI
-- BASE_URL: `http://127.0.0.1:8000/v1`
-- MODEL_NAME: `/v1/models` 응답 기준
-- Client Python: `python3 --version`
-- Client package: `pip freeze`
-- GPU/server 정보: server를 실행한 챕터의 runtime 기록 참고
-- Optional tools: `k6`, `locust`, `hey`, `wrk`는 처음에는 없어도 정상
+| 항목 | 의미 | 정상/주의 기준 |
+| --- | --- | --- |
+| Target server | benchmark 대상 | vLLM, NIM, FastAPI 중 하나를 명확히 정한다. |
+| BASE_URL | client가 호출할 endpoint | OpenAI-compatible이면 보통 `http://127.0.0.1:8000/v1` 형태다. |
+| MODEL_NAME | 요청 JSON의 model field | `/v1/models` 응답 기준으로 맞춘다. |
+| Client Python | benchmark client 실행 환경 | `python3 --version`이 정상 출력되어야 한다. |
+| Client package | benchmark client dependency | `pip freeze`로 버전을 확인할 수 있다. |
+| GPU/server 정보 | 결과 해석에 필요한 server 조건 | server를 실행한 챕터의 runtime 정보와 함께 본다. |
+| Optional tools | 추가 load test 도구 | `k6`, `locust`, `hey`, `wrk`는 처음에는 없어도 정상이다. |
 
 ## Tool Choice
 
@@ -167,7 +169,7 @@ bash scripts/10_stop_container.sh
 
 | 목적 | 추천 도구 |
 | --- | --- |
-| LLM prompt/output/streaming TTFT를 직접 기록 | custom Python benchmark |
+| LLM prompt/output/streaming TTFT를 세부 측정 | custom Python benchmark |
 | 간단한 HTTP endpoint smoke load test | `hey` |
 | gateway나 단순 HTTP path의 높은 부하 테스트 | `wrk` |
 | CI에서 threshold 기반 성능 검증 | `k6` |

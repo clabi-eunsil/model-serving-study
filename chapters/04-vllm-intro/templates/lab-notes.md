@@ -85,14 +85,16 @@ ssh user@gpu-server
 cd ~/vllm-intro
 ```
 
-기록할 값:
+예상 확인:
 
-- Host: local WSL 또는 remote GPU server
-- Docker: `docker --version` 출력
-- NVIDIA driver/GPU: `nvidia-smi` 출력
-- Docker GPU support: `docker run --rm --gpus all ... nvidia-smi` 결과
-- vLLM image: `vllm/vllm-openai:latest` 또는 실습에서 사용한 tag
-- Port: `8000`
+| 항목 | 의미 | 정상/주의 기준 |
+| --- | --- | --- |
+| Host | local WSL 또는 remote GPU server | GPU 실습은 GPU가 있는 서버에서 진행한다. |
+| Docker | container runtime 확인 | `docker --version`과 `docker info`가 정상 출력되어야 한다. |
+| NVIDIA driver/GPU | GPU 인식 여부 | `nvidia-smi`가 GPU와 driver version을 보여야 한다. |
+| Docker GPU support | container에서 GPU를 볼 수 있는지 | `docker run --rm --gpus all ... nvidia-smi`가 성공해야 한다. |
+| vLLM image | 사용할 server image | `vllm/vllm-openai:latest` 또는 명시한 tag를 사용한다. |
+| Port | vLLM server HTTP port | 기본 실습은 `8000`을 사용한다. |
 
 ## Model
 

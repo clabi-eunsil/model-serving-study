@@ -55,14 +55,16 @@ deactivate
 
 ## Environment
 
-기록할 값:
+예상 확인:
 
-- Host: local WSL 또는 remote GPU server
-- Docker: `docker --version`
-- GPU: `nvidia-smi`
-- vLLM image: `vllm/vllm-openai:latest` 또는 사용한 tag
-- Model: `Qwen/Qwen3-0.6B`
-- Served model name: `qwen3-0.6b`
+| 항목 | 의미 | 정상/주의 기준 |
+| --- | --- | --- |
+| Host | benchmark를 실행할 위치 | GPU benchmark는 remote GPU server에서 진행하는 것이 자연스럽다. |
+| Docker | vLLM server 실행 기반 | `docker --version`이 정상 출력되어야 한다. |
+| GPU | model serving 자원 | `nvidia-smi`로 GPU memory와 utilization을 확인한다. |
+| vLLM image | benchmark 대상 server image | `vllm/vllm-openai:latest` 또는 사용한 tag를 명시한다. |
+| Model | benchmark 대상 model | 기본 실습은 `Qwen/Qwen3-0.6B`를 사용한다. |
+| Served model name | client가 요청에 넣는 model 이름 | 기본 실습은 `qwen3-0.6b`를 사용한다. |
 
 ## Server Options
 

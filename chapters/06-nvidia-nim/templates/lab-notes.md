@@ -80,24 +80,26 @@ deactivate
 
 ## Environment
 
-기록할 값:
+예상 확인:
 
-- Host: local WSL 또는 remote GPU server
-- Docker: `docker --version`
-- GPU: `nvidia-smi`
-- NIM image: NGC catalog에서 확인한 image/tag
-- NIM model name: `/v1/models` 응답 또는 NIM model page 기준
-- NGC login: 성공 여부
+| 항목 | 의미 | 정상/주의 기준 |
+| --- | --- | --- |
+| Host | NIM container를 실행할 위치 | GPU가 있는 서버에서 진행한다. |
+| Docker | NIM image 실행 기반 | `docker --version`이 정상 출력되어야 한다. |
+| GPU | NIM runtime 자원 | `nvidia-smi`로 GPU와 driver를 확인한다. |
+| NIM image | 실행할 NGC image/tag | NGC catalog에서 image와 tag를 확인한다. |
+| NIM model name | API에서 사용할 model 이름 | `/v1/models` 응답 또는 NIM model page 기준으로 맞춘다. |
+| NGC login | private registry 접근 권한 | NGC API key로 `docker login nvcr.io`가 성공해야 한다. |
 
 ## NIM Image and Access
 
 실제 실행 전 확인:
 
-| 항목 | 확인 위치 | 기록 |
+| 항목 | 확인 위치 | 볼 것 |
 | --- | --- | --- |
-| image repository/tag | NGC catalog |  |
-| license/terms | NGC model page |  |
-| required GPU/memory | NGC model page 또는 NIM docs |  |
+| image repository/tag | NGC catalog | pull할 image와 tag가 정확한지 |
+| license/terms | NGC model page | 사용 조건을 수락해야 하는지 |
+| required GPU/memory | NGC model page 또는 NIM docs | 현재 GPU 서버에서 실행 가능한지 |
 | cache path | NIM docs/model page |  |
 | API model name | `/v1/models` 응답 |  |
 

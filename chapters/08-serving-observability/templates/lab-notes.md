@@ -76,16 +76,18 @@ FastAPI server는 실행 중인 터미널에서 `Ctrl+C`로 종료한다.
 
 ## Environment
 
-기록할 값:
+예상 확인:
 
-- Host: local / remote GPU server
-- Python: `python3 --version`
-- Docker: `docker --version`
-- Docker Compose: `docker compose version`
-- Prometheus image: `prom/prometheus:v3.5.0`
-- Grafana image: `grafana/grafana:12.0.2`
-- DCGM exporter image: `nvcr.io/nvidia/k8s/dcgm-exporter:2.1.4-2.3.1-ubuntu20.04` 또는 공식 문서에서 확인한 최신 tag
-- GPU: `nvidia-smi` 또는 GPU 없음
+| 항목 | 의미 | 정상/주의 기준 |
+| --- | --- | --- |
+| Host | monitoring stack 실행 위치 | local Docker Desktop/WSL 또는 remote server에서 진행한다. |
+| Python | FastAPI model server 실행 환경 | `python3 --version`으로 확인한다. |
+| Docker | Prometheus/Grafana 실행 기반 | `docker --version`이 정상 출력되어야 한다. |
+| Docker Compose | monitoring stack 실행 방식 | `docker compose version`이 정상 출력되어야 한다. |
+| Prometheus image | metrics 수집 component | 기본 실습은 `prom/prometheus:v3.5.0`을 사용한다. |
+| Grafana image | dashboard component | 기본 실습은 `grafana/grafana:12.0.2`를 사용한다. |
+| DCGM exporter image | GPU metrics exporter | GPU 서버에서만 필요하며 공식 문서의 tag를 확인한다. |
+| GPU | GPU metrics 확인 가능 여부 | GPU가 없으면 DCGM exporter 실습은 건너뛸 수 있다. |
 
 ## Expected Endpoints
 

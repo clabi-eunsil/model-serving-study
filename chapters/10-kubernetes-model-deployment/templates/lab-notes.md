@@ -19,24 +19,22 @@ cd ~/study/model-serving/chapters/10-kubernetes-model-deployment
 bash scripts/01_check_env.sh
 ```
 
-기록할 값:
-
-| 항목 | 예시 | 내 결과 |
-| --- | --- | --- |
-| Kubernetes type | minikube / k3s / managed / kubeadm | |
-| Kubernetes context | `model-serving` | |
-| Kubernetes version | v1.33.x | |
-| Node count | 1 | |
-| StorageClass | `standard`, `local-path`, `gp3` 등 | |
-| IngressClass | `nginx` 또는 없음 | |
-| Docker | `docker --version` | |
-| GPU | `nvidia-smi` 결과 또는 GPU 없음 | |
-
 예상 확인:
 
-- local 실습이면 `kubectl`, `docker`, `minikube`가 필요하다.
-- Helm은 CPU Deployment 실습에는 필수가 아니고, NVIDIA device plugin을 Helm 방식으로 설치할 때만 필요하다.
-- GPU 실습이 아니면 `nvidia-smi: not found`가 나와도 괜찮다.
+| 항목 | 의미 | 정상/주의 기준 |
+| --- | --- | --- |
+| Kubernetes context | 지금 `kubectl`이 바라보는 cluster | local 실습이면 `model-serving` 같은 개인 minikube context가 안전하다. |
+| Kubernetes node | Pod가 배치될 node | node가 `Ready`여야 한다. |
+| Kubernetes version | cluster API version | 실습용 manifest를 적용할 수 있는 최신 Kubernetes면 충분하다. |
+| StorageClass | PVC를 동적으로 만들 수 있는지 | minikube에서는 보통 `standard`가 default로 보인다. |
+| IngressClass | Ingress controller가 준비되었는지 | minikube ingress addon을 켰다면 `nginx`가 보일 수 있다. |
+| Docker | image build 가능 여부 | local image를 build하고 minikube에 load하려면 필요하다. |
+| minikube | local cluster 관리 도구 | local 실습이면 필요하다. 원격 cluster를 쓰면 없어도 된다. |
+| Helm | chart 기반 설치 도구 | CPU Deployment에는 필수가 아니고, NVIDIA device plugin을 Helm으로 설치할 때 사용한다. |
+| GPU | GPU 실습 가능 여부 | GPU 실습이 아니면 `nvidia-smi: not found`가 나와도 괜찮다. |
+
+정리하면, CPU 실습의 최소 조건은 `kubectl`, `docker`, `minikube`, Ready node다.  
+GPU 실습은 여기에 NVIDIA driver, NVIDIA Container Toolkit, device plugin, `nvidia.com/gpu` resource가 추가로 필요하다.
 
 ## Cluster Setup
 
@@ -215,11 +213,25 @@ bash scripts/11_cleanup.sh
 - `model-serving` namespace와 그 안의 object가 삭제된다.
 - PVC까지 삭제되므로 model cache도 사라질 수 있다.
 
-minikube cluster 자체를 삭제하려면:
+minikube cluster를 잠시 멈추려면:
+
+```bash
+minikube stop -p model-serving
+```
+
+minikube cluster 자체를 완전히 삭제하려면:
 
 ```bash
 minikube delete -p model-serving
 ```
+
+차이는 아래처럼 이해한다.
+
+| 명령 | 의미 | 언제 쓰나 |
+| --- | --- | --- |
+| `bash scripts/11_cleanup.sh` | 챕터 10 실습 namespace와 리소스 삭제 | cluster는 남기고 다음 실습을 이어갈 때 |
+| `minikube stop -p model-serving` | minikube cluster를 멈춤 | 나중에 다시 이어서 쓸 때 |
+| `minikube delete -p model-serving` | minikube cluster 자체를 삭제 | 디스크/리소스를 정리하고 처음부터 다시 만들 때 |
 
 local Python 가상환경을 켜둔 상태라면:
 
