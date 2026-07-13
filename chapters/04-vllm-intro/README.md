@@ -4,14 +4,14 @@
 핵심은 "모델 서버를 직접 구현하는 것"과 "vLLM 같은 serving engine을 사용하는 것"의 차이를 이해하는 것이다.
 
 vLLM은 업데이트가 빠른 프로젝트다.  
-이 문서는 2026-06-22 기준 공식 stable 문서를 바탕으로 작성했다.  
+이 문서는 2026년 6월 기준 공식 stable 문서를 바탕으로 작성했다.  
 설치 방법, Docker image tag, 지원 model, 옵션 이름은 바뀔 수 있으므로 핵심 공식 문서는 본문에 바로 연결해 두고, 전체 목록은 [references.md](references.md)에 모아 둔다.
 
 ## 학습 목표
 
 - vLLM이 해결하려는 문제를 이해한다.  
 - PagedAttention, KV cache 관리, continuous batching을 쉬운 말로 설명할 수 있다.  
-- vLLM OpenAI-compatible server의 endpoint 구조를 이해한다.  
+- vLLM Online Serving의 endpoint 구조를 이해한다.  
 - `--model`, `--served-model-name`, `--gpu-memory-utilization`, `--max-model-len` 옵션의 의미를 안다.
 - Docker로 vLLM server를 실행하고, `curl`과 OpenAI SDK client로 호출한다.
 - streaming 응답에서 첫 token과 이후 token이 어떻게 도착하는지 관찰한다.
@@ -37,7 +37,7 @@ vLLM은 업데이트가 빠른 프로젝트다.
 | --- | --- |
 | [vLLM stable docs](https://docs.vllm.ai/en/stable/) | 현재 stable 문서와 latest 문서 차이 |
 | [vLLM Docker deployment](https://docs.vllm.ai/en/stable/deployment/docker/) | `vllm/vllm-openai`, `--gpus all`, cache mount, `--ipc=host` |
-| [vLLM OpenAI-compatible server](https://docs.vllm.ai/en/stable/serving/openai_compatible_server/) | `/v1/models`, `/v1/chat/completions`, OpenAI SDK 연결 |
+| [vLLM Online Serving](https://docs.vllm.ai/en/stable/serving/online_serving/) | `/v1/models`, `/v1/chat/completions`, OpenAI SDK 연결 |
 | [vLLM engine arguments](https://docs.vllm.ai/en/stable/configuration/engine_args/) | `--model`, `--served-model-name`, `--gpu-memory-utilization`, `--max-model-len` |
 | [vLLM supported models](https://docs.vllm.ai/en/stable/models/supported_models/) | 사용하려는 Hugging Face model architecture 지원 여부 |
 | [Hugging Face Models](https://huggingface.co/models) | model repository id, model card, license, gated/private 여부 |

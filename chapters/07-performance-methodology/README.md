@@ -4,7 +4,7 @@
 챕터 5가 vLLM option을 바꿔보는 실습이었다면, 챕터 7은 vLLM, NIM, FastAPI model server처럼 여러 backend에 공통으로 적용할 수 있는 benchmark 방법론을 다룬다.
 
 성능 테스트 도구와 vLLM benchmark script는 업데이트될 수 있다.  
-이 문서는 2026-06-30 기준 공식 문서를 바탕으로 작성했다.  
+이 문서는 2026년 6월 기준 공식 문서를 바탕으로 작성했다.  
 핵심 공식 문서는 본문에 바로 연결해 두고, 전체 목록은 [references.md](references.md)에 모아 둔다.
 
 ## 학습 목표
@@ -38,8 +38,8 @@
 
 | 문서 | 바로 볼 부분 |
 | --- | --- |
-| [vLLM Benchmarking](https://docs.vllm.ai/en/latest/contributing/benchmarks.html) | vLLM benchmark script 종류와 serving benchmark 관점 |
-| [vLLM Production Metrics](https://docs.vllm.ai/en/latest/usage/metrics.html) | latency, throughput, scheduler, cache metric |
+| [vLLM Benchmarking](https://docs.vllm.ai/en/latest/benchmarking/) | vLLM benchmark script 종류와 serving benchmark 관점 |
+| [vLLM Production Metrics](https://docs.vllm.ai/en/latest/usage/metrics/) | latency, throughput, scheduler, cache metric |
 | [OpenAI Chat Completions API](https://platform.openai.com/docs/api-reference/chat/create) | OpenAI-compatible request/response 구조 비교 |
 | [k6 HTTP metrics](https://grafana.com/docs/k6/latest/using-k6/metrics/reference/) | HTTP load test 기본 latency, request rate, failure metric |
 | [Locust documentation](https://docs.locust.io/) | Python으로 user behavior 기반 load test 작성 |
@@ -90,7 +90,7 @@ deactivate
 ### 선택 A. 챕터 4 vLLM server
 
 가장 단순한 선택이다.
-챕터 4에서 사용한 vLLM OpenAI-compatible server를 다시 실행한다.
+챕터 4에서 사용한 vLLM Online Serving를 다시 실행한다.
 
 터미널 1:
 

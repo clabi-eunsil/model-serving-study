@@ -4,7 +4,7 @@
 챕터 12에서는 같은 KServe abstraction을 LLM에 적용한다.
 
 KServe의 generative inference, Hugging Face runtime, vLLM backend, Gateway, autoscaling 정책은 버전 변화가 잦다.
-이 문서는 2026-07-08 기준 KServe 0.18 공식 문서를 바탕으로 작성했다.
+이 문서는 2026년 7월 기준 KServe 0.18 공식 문서를 바탕으로 작성했다.
 핵심 공식 문서는 본문에 바로 연결해 두고, 전체 목록은 [references.md](references.md)에 모아 둔다.
 
 ## 학습 목표
@@ -451,7 +451,7 @@ kubectl -n kserve-llm get servingruntime custom-vllm-runtime
 | `supportedModelFormats.name: huggingface` | 이 runtime이 Hugging Face 형식 모델을 처리할 수 있다고 선언 |
 | `autoSelect: false` | 자동 선택되지 않고, InferenceService에서 명시적으로 참조할 때 사용 |
 | `containers.image` | 실제 vLLM server image |
-| `containers.args` | vLLM OpenAI-compatible server 실행 옵션 |
+| `containers.args` | vLLM Online Serving 실행 옵션 |
 | `resources` | custom runtime Pod가 필요로 하는 CPU, memory, GPU |
 
 이 다음 단계로 실제 custom runtime Pod까지 띄우려면 `InferenceService`에서 이 runtime을 참조하도록 manifest를 추가로 작성해야 한다.

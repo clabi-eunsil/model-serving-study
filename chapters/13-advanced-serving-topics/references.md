@@ -1,6 +1,6 @@
 # References
 
-이 문서는 2026-07-08 기준 공식 문서를 바탕으로 작성했다.  
+이 문서는 2026년 7월 기준 공식 문서를 바탕으로 작성했다.  
 vLLM의 quantization, LoRA, speculative decoding, parallelism 옵션은 빠르게 바뀌므로 실습 전 다시 확인한다.
 
 ## 공식 문서

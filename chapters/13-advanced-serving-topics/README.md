@@ -4,7 +4,7 @@
 이 장의 목표는 모든 기능을 운영 환경 수준으로 완벽하게 쓰는 것이 아니라, **어떤 문제가 생겼을 때 어떤 종류의 해결책을 검토해야 하는지**를 잡는 것이다.
 
 vLLM quantization, LoRA, speculative decoding, prefix caching, parallelism 관련 옵션은 버전 변화가 잦다.  
-이 문서는 2026-07-08 기준 vLLM latest developer preview 문서와 NGINX 공식 문서를 바탕으로 작성했다.
+이 문서는 2026년 7월 기준 vLLM latest developer preview 문서와 NGINX 공식 문서를 바탕으로 작성했다.
 
 ## 학습 목표
 

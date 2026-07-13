@@ -4,7 +4,7 @@
 
 - vLLM documentation: https://docs.vllm.ai/en/stable/
 - vLLM Docker deployment: https://docs.vllm.ai/en/stable/deployment/docker/
-- vLLM OpenAI-compatible server: https://docs.vllm.ai/en/stable/serving/openai_compatible_server/
+- vLLM Online Serving: https://docs.vllm.ai/en/stable/serving/online_serving/
 - vLLM engine arguments: https://docs.vllm.ai/en/stable/configuration/engine_args/
 - PagedAttention paper: https://arxiv.org/abs/2309.06180
 
@@ -98,7 +98,7 @@ cd ~/vllm-intro
 
 - Model name: `Qwen/Qwen3-0.6B`
 - Served model name: `qwen3-0.6b`
-- Model purpose: vLLM OpenAI-compatible server 흐름 확인
+- Model purpose: vLLM Online Serving 흐름 확인
 - Model note: 이 챕터의 핵심은 답변 품질 평가가 아니라 vLLM server 실행, OpenAI-compatible API 호출, streaming 응답 관찰이다.
 
 `Qwen/Qwen3-0.6B`는 Hugging Face Hub의 model repository id다.

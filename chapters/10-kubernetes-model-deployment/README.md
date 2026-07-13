@@ -4,7 +4,7 @@
 이번 단원의 핵심은 "모델 서버 container 하나를 실행한다"가 아니라, **운영 환경에서 반복 배포할 수 있는 Kubernetes object 흐름**을 이해하는 것이다.
 
 Kubernetes 설치 방식, NVIDIA device plugin 버전, Ingress controller 구성은 자주 바뀔 수 있다.
-이 문서는 2026-07-07 기준 공식 문서를 바탕으로 작성했다.
+이 문서는 2026년 7월 기준 공식 문서를 바탕으로 작성했다.
 핵심 공식 문서는 본문에 바로 연결해 두고, 전체 목록은 [references.md](references.md)에 모아 둔다.
 
 ## 학습 목표

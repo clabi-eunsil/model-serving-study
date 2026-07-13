@@ -1,6 +1,6 @@
 # Langfuse UI 읽는 법
 
-이 문서는 2026-07-07 기준 Langfuse Cloud 화면과 공식 문서를 바탕으로 작성했다.  
+이 문서는 2026년 7월 기준 Langfuse Cloud 화면과 공식 문서를 바탕으로 작성했다.  
 Langfuse UI는 자주 개선될 수 있으므로 메뉴 이름이나 위치가 조금 다르면 [Langfuse Observability 문서](https://langfuse.com/docs/observability/overview)와 [SDK 문서](https://langfuse.com/docs/observability/sdk/overview)를 함께 확인한다.
 
 ## 먼저 알아둘 것

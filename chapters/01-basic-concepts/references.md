@@ -7,9 +7,9 @@
 | 문서 | URL | 주요하게 볼 부분 |
 | --- | --- | --- |
 | vLLM documentation | https://docs.vllm.ai/ | vLLM이 제공하는 serving, deployment, observability, benchmarking 문서의 전체 위치를 파악한다. |
-| vLLM OpenAI-compatible server | https://docs.vllm.ai/en/latest/serving/openai_compatible_server/ | `/v1/chat/completions` 같은 endpoint, server 실행 옵션, OpenAI SDK 호환 방식을 본다. |
+| vLLM Online Serving | https://docs.vllm.ai/en/latest/serving/online_serving/ | `/v1/chat/completions` 같은 endpoint, server 실행 옵션, OpenAI SDK 호환 방식을 본다. |
 | vLLM benchmarking | https://docs.vllm.ai/en/latest/benchmarking/ | latency, throughput, serving benchmark를 어떤 식으로 측정하는지 본다. |
-| vLLM production metrics | https://docs.vllm.ai/en/latest/usage/metrics.html | 실제 운영에서 어떤 metrics를 노출하고 Prometheus로 어떻게 볼 수 있는지 확인한다. |
+| vLLM production metrics | https://docs.vllm.ai/en/latest/usage/metrics/ | 실제 운영에서 어떤 metrics를 노출하고 Prometheus로 어떻게 볼 수 있는지 확인한다. |
 | NVIDIA NIM for LLMs | https://docs.nvidia.com/nim/large-language-models/latest/introduction.html | NIM이 어떤 형태의 inference microservice인지, OpenAI-compatible endpoint와 container 운영 방식을 본다. |
 | KServe documentation | https://kserve.github.io/website/ | KServe가 Kubernetes 위에서 model serving을 어떻게 추상화하는지, `InferenceService`와 LLM serving 예시를 본다. |
 | Kubeflow Architecture | https://www.kubeflow.org/docs/started/architecture/ | Kubeflow가 ML lifecycle과 pipeline, serving을 전체 플랫폼 관점에서 어떻게 위치시키는지 본다. |

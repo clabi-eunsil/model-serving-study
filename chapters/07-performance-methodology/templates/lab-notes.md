@@ -2,8 +2,8 @@
 
 ## Sources
 
-- vLLM Benchmarking: https://docs.vllm.ai/en/latest/contributing/benchmarks.html
-- vLLM Production Metrics: https://docs.vllm.ai/en/latest/usage/metrics.html
+- vLLM Benchmarking: https://docs.vllm.ai/en/latest/benchmarking/
+- vLLM Production Metrics: https://docs.vllm.ai/en/latest/usage/metrics/
 - OpenAI Chat Completions API: https://platform.openai.com/docs/api-reference/chat/create
 - k6 HTTP metrics: https://grafana.com/docs/k6/latest/using-k6/metrics/reference/
 - Locust documentation: https://docs.locust.io/

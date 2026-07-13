@@ -7,8 +7,8 @@
 
 | 주제 | URL | 주요하게 볼 부분 |
 | --- | --- | --- |
-| vLLM Benchmarking | https://docs.vllm.ai/en/latest/contributing/benchmarks.html | vLLM이 제공하는 benchmark script 종류와 serving benchmark 관점을 확인한다. |
-| vLLM Production Metrics | https://docs.vllm.ai/en/latest/usage/metrics.html | 운영 환경에서 latency, throughput, scheduler, cache 관련 metric을 어떻게 보는지 확인한다. |
+| vLLM Benchmarking | https://docs.vllm.ai/en/latest/benchmarking/ | vLLM이 제공하는 benchmark script 종류와 serving benchmark 관점을 확인한다. |
+| vLLM Production Metrics | https://docs.vllm.ai/en/latest/usage/metrics/ | 운영 환경에서 latency, throughput, scheduler, cache 관련 metric을 어떻게 보는지 확인한다. |
 | OpenAI Chat Completions API | https://platform.openai.com/docs/api-reference/chat/create | OpenAI-compatible server에 보낼 request/response 구조를 비교한다. |
 | k6 HTTP metrics | https://grafana.com/docs/k6/latest/using-k6/metrics/reference/ | HTTP load test에서 기본 제공되는 latency, request rate, failure metric을 확인한다. |
 | Locust documentation | https://docs.locust.io/ | Python으로 user behavior 기반 load test를 작성하는 방식을 본다. |

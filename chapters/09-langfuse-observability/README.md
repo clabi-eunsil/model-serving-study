@@ -7,7 +7,7 @@ Prometheus가 "요청 수, latency, tokens/sec가 얼마나 나오는가"를 보
 Langfuse는 "어떤 prompt가 들어왔고, 어떤 답변이 나왔고, 어떤 사용자/session에서 발생했으며, 어떤 generation이 느렸는가"를 보는 데 강하다.
 
 Langfuse SDK, Cloud region, self-hosting 방식, prompt/evaluation 기능은 업데이트될 수 있다.  
-이 문서는 2026-07-07 기준 공식 문서를 바탕으로 작성했다.  
+이 문서는 2026년 7월 기준 공식 문서를 바탕으로 작성했다.  
 핵심 공식 문서는 본문에 바로 연결해 두고, 전체 목록은 [references.md](references.md)에 모아 둔다.
 
 ## 학습 목표
@@ -254,7 +254,7 @@ bash scripts/02_send_trace.sh
 Langfuse Cloud나 self-hosted Langfuse project에서 API key를 발급받은 뒤 `.env`를 만든다.
 
 공식 문서 기준으로 Langfuse SDK는 project별 `public key`, `secret key`, `base URL`을 환경변수로 읽어 trace를 보낸다.  
-이 문서는 2026-07-07 기준으로 작성했지만, UI 메뉴 이름은 Langfuse 버전에 따라 조금 바뀔 수 있다.  
+이 문서는 2026년 7월 기준으로 작성했지만, UI 메뉴 이름은 Langfuse 버전에 따라 조금 바뀔 수 있다.  
 막히면 [Langfuse SDK setup 문서](https://langfuse.com/docs/observability/sdk/overview)의 credentials 설정 부분을 먼저 확인한다.
 
 #### Cloud에서 API key 받기

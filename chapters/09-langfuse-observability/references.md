@@ -1,6 +1,6 @@
 # References
 
-이 문서는 2026-07-07 기준 공식 문서를 바탕으로 작성했다. Langfuse SDK, self-hosting, prompt management, dataset/evaluation 기능은 업데이트될 수 있으므로 실습 전에 다시 확인한다.
+이 문서는 2026년 7월 기준 공식 문서를 바탕으로 작성했다. Langfuse SDK, self-hosting, prompt management, dataset/evaluation 기능은 업데이트될 수 있으므로 실습 전에 다시 확인한다.
 
 | 문서 | URL | 주요하게 볼 부분 |
 | --- | --- | --- |

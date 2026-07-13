@@ -2,7 +2,7 @@
 
 ## 기준 문서
 
-- 작성/확인일: 2026-07-08
+- 작성/확인일: 2026년 7월
 - KServe 기준 문서: https://kserve.github.io/website/docs/getting-started/genai-first-isvc
 - Runtime 기준 문서: https://kserve.github.io/website/docs/model-serving/generative-inference/overview
 

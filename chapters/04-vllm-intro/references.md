@@ -10,7 +10,7 @@ vLLM은 release와 Docker image가 자주 바뀌므로, 실습 전 공식 문서
 | vLLM stable docs | https://docs.vllm.ai/en/stable/ | 현재 stable 문서인지 확인. 최신 developer preview와 stable 문서가 다를 수 있다. |
 | Installation | https://docs.vllm.ai/en/stable/getting_started/installation/ | GPU/CPU 설치 경로, Python/PyTorch/CUDA 요구사항 |
 | Using Docker | https://docs.vllm.ai/en/stable/deployment/docker/ | `vllm/vllm-openai` image, `docker run --gpus all`, cache mount, `--ipc=host` |
-| OpenAI-Compatible Server | https://docs.vllm.ai/en/stable/serving/openai_compatible_server/ | `/v1/models`, `/v1/chat/completions`, OpenAI SDK와의 연결 방식 |
+| Online Serving | https://docs.vllm.ai/en/stable/serving/online_serving/ | `/v1/models`, `/v1/chat/completions`, OpenAI SDK와의 연결 방식 |
 | Engine Arguments | https://docs.vllm.ai/en/stable/configuration/engine_args/ | `--model`, `--served-model-name`, `--gpu-memory-utilization`, `--max-model-len` |
 | Server Arguments | https://docs.vllm.ai/en/stable/configuration/server_args/ | `--host`, `--port`, server 실행 관련 옵션 |
 | Model Resolution | https://docs.vllm.ai/en/stable/configuration/model_resolution/ | vLLM이 Hugging Face model repo의 `config.json`과 architecture 정보를 어떻게 해석하는지 |

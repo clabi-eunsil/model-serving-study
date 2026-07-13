@@ -2,7 +2,7 @@
 
 ## 기준 문서
 
-- 작성/확인일: 2026-07-08
+- 작성/확인일: 2026년 7월
 - vLLM Quantization: https://docs.vllm.ai/en/latest/features/quantization/
 - vLLM LoRA: https://docs.vllm.ai/en/latest/features/lora/
 - vLLM Speculative Decoding: https://docs.vllm.ai/en/latest/features/speculative_decoding/
