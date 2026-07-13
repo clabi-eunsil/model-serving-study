@@ -8,6 +8,11 @@ kind: InferenceService
 metadata:
   name: sklearn-iris
   namespace: kserve-test
+  annotations:
+    # 이번 챕터의 표준 실습은 Knative가 없는 KServe standard mode다.
+    # annotation을 명시하지 않으면 cluster config에 따라 Knative mode로 처리될 수 있고,
+    # Knative가 설치되어 있지 않은 환경에서는 Pod가 생성되지 않고 Ready가 Unknown에 머문다.
+    serving.kserve.io/deploymentMode: Standard
 spec:
   predictor:
     model:

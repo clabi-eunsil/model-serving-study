@@ -21,10 +21,44 @@ set -euo pipefail
 KSERVE_VERSION="${KSERVE_VERSION:-v0.18.0}"
 INSTALL_URL="https://github.com/kserve/kserve/releases/download/${KSERVE_VERSION}/kserve-standard-mode-full-install-with-manifests.sh"
 
+command_exists() {
+  command -v "$1" >/dev/null 2>&1
+}
+
+print_missing_tool_help() {
+  local tool="$1"
+
+  case "${tool}" in
+    kubectl)
+      echo "- kubectl이 없다면 챕터 10의 Kubernetes 도구 설치 안내를 먼저 확인한다."
+      echo "  ../10-kubernetes-model-deployment/README.md#1-환경-확인"
+      ;;
+    curl)
+      echo "- curl이 없다면 Ubuntu/WSL 기준으로 아래처럼 설치할 수 있다."
+      echo "  sudo apt-get update && sudo apt-get install -y curl"
+      ;;
+    helm)
+      echo "- Helm이 없다면 Ubuntu/WSL 기준으로 아래처럼 설치할 수 있다."
+      echo "  curl https://raw.githubusercontent.com/helm/helm/main/scripts/get-helm-3 | bash"
+      echo "  공식 문서: https://helm.sh/docs/intro/install/"
+      ;;
+    git)
+      echo "- git이 없다면 Ubuntu/WSL 기준으로 아래처럼 설치할 수 있다."
+      echo "  sudo apt-get update && sudo apt-get install -y git"
+      ;;
+  esac
+}
+
 echo "== KServe Quickstart standard mode 설치 준비 =="
 echo "KServe version: ${KSERVE_VERSION}"
 echo "Install script: ${INSTALL_URL}"
 echo
+
+if ! command_exists kubectl; then
+  echo "ERROR: kubectl을 찾을 수 없다."
+  print_missing_tool_help kubectl
+  exit 1
+fi
 
 echo "## 1. 현재 Kubernetes context"
 kubectl config current-context
@@ -36,8 +70,28 @@ echo
 
 echo "## 3. 필요한 CLI 확인"
 kubectl version --client
-helm version
-git --version
+
+if command_exists helm; then
+  helm version
+else
+  echo "WARN: helm을 찾을 수 없다."
+  print_missing_tool_help helm
+fi
+
+if command_exists git; then
+  git --version
+else
+  echo "WARN: git을 찾을 수 없다."
+  print_missing_tool_help git
+fi
+
+if command_exists curl; then
+  curl --version | head -n 1
+else
+  echo "ERROR: curl을 찾을 수 없다. KServe release script를 내려받으려면 curl이 필요하다."
+  print_missing_tool_help curl
+  exit 1
+fi
 echo
 
 echo "## 4. 실행될 공식 설치 명령"

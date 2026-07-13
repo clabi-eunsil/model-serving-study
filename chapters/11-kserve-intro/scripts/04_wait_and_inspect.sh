@@ -8,18 +8,18 @@ set -euo pipefail
 # standard mode에서는 Deployment/Service 중심으로 보일 수 있다.
 
 NAMESPACE="${NAMESPACE:-kserve-test}"
-NAME="${NAME:-sklearn-iris}"
+ISVC_NAME="${ISVC_NAME:-sklearn-iris}"
 
-echo "Waiting for InferenceService/${NAME} to become Ready..."
-kubectl wait --for=condition=Ready "inferenceservice/${NAME}" -n "${NAMESPACE}" --timeout=10m
+echo "Waiting for InferenceService/${ISVC_NAME} to become Ready..."
+kubectl wait --for=condition=Ready "inferenceservice/${ISVC_NAME}" -n "${NAMESPACE}" --timeout=10m
 
 echo
 echo "## InferenceService"
-kubectl get inferenceservice "${NAME}" -n "${NAMESPACE}" -o wide
+kubectl get inferenceservice "${ISVC_NAME}" -n "${NAMESPACE}" -o wide
 
 echo
 echo "## URL"
-kubectl get inferenceservice "${NAME}" -n "${NAMESPACE}" -o jsonpath='{.status.url}{"\n"}'
+kubectl get inferenceservice "${ISVC_NAME}" -n "${NAMESPACE}" -o jsonpath='{.status.url}{"\n"}'
 
 echo
 echo "## Related Kubernetes resources"
