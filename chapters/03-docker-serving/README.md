@@ -13,43 +13,6 @@
 - Docker Compose로 모델 서버를 실행하고 호출한다.
 - image size를 확인하고 줄일 수 있는 지점을 찾는다.
 
-## 체크리스트 대응
-
-루트 [README.md](../../README.md)의 챕터 3 체크리스트는 아래 순서로 확인하면 된다.
-
-| 체크 항목 | 이 문서에서 볼 위치 | 함께 볼 파일 |
-| --- | --- | --- |
-| Docker image와 container 차이 이해 | [핵심 개념 요약](#핵심-개념-요약) | - |
-| 모델 서버용 Dockerfile 구조 이해 | [코드 워크스루 - Dockerfile](#1-dockerfile) | [Dockerfile](Dockerfile) |
-| Docker layer cache와 build context 개념 이해 | [이 단원에서 반드시 가져갈 정리](#이-단원에서-반드시-가져갈-정리) | [.dockerignore](.dockerignore), [Dockerfile](Dockerfile) |
-| Python dependency와 model cache 분리 전략 이해 | [model cache 정리](#4-model-cache는-image에-넣을-수도-있고-volume으로-분리할-수도-있다) | [Dockerfile](Dockerfile), [docker-compose.yml](docker-compose.yml) |
-| container port와 host port mapping 이해 | [Port Mapping](#port-mapping) | [scripts/03_run_container.sh](scripts/03_run_container.sh) |
-| CPU container와 GPU container 차이 이해 | [CPU Container vs GPU Container](#cpu-container-vs-gpu-container) | [scripts/03_run_container.sh](scripts/03_run_container.sh), [scripts/07_run_container_gpu.sh](scripts/07_run_container_gpu.sh) |
-| NVIDIA Container Toolkit 역할 이해 | [GPU container 선택 실습](#9-gpu-container-선택-실습) | [scripts/01_check_env.sh](scripts/01_check_env.sh), [scripts/08_remote_gpu_checklist.sh](scripts/08_remote_gpu_checklist.sh) |
-| Docker volume mount로 모델 캐시 관리하는 방법 학습 | [Model Cache](#model-cache) | [scripts/03_run_container.sh](scripts/03_run_container.sh), [docker-compose.yml](docker-compose.yml) |
-| `docker run`과 Docker Compose 실행 방식 차이 이해 | [docker run과 Docker Compose의 차이](#3-docker-run과-docker-compose의-차이) | [docker-compose.yml](docker-compose.yml) |
-| Docker Hub, NGC, Hugging Face token이 필요한 경우 구분 | [Docker login이 필요한 경우](#docker-login이-필요한-경우) | - |
-| 원격 GPU 서버에서 챕터 디렉터리만 복사해 실습하는 흐름 이해 | [원격 GPU 서버에서 실행하는 경우](#원격-gpu-서버에서-실행하는-경우) | [scripts/08_remote_gpu_checklist.sh](scripts/08_remote_gpu_checklist.sh) |
-| 실습: Docker 환경 확인 및 미설치/미연결 시 조치 방법 확인 | [Docker 환경 확인](#1-docker-환경-확인) | [scripts/01_check_env.sh](scripts/01_check_env.sh) |
-| 실습: FastAPI 모델 서버 Docker 이미지 빌드 | [Image build](#2-image-build) | [scripts/02_build_image.sh](scripts/02_build_image.sh) |
-| 실습: CPU inference container 실행 | [CPU container 실행](#3-cpu-container-실행) | [scripts/03_run_container.sh](scripts/03_run_container.sh) |
-| 실습: GPU container 실행 및 `nvidia-smi` 확인 | [GPU container 선택 실습](#9-gpu-container-선택-실습) | [scripts/07_run_container_gpu.sh](scripts/07_run_container_gpu.sh) |
-| 실습: Docker Compose로 server/client 구성 | [Docker Compose로 server/client 구성](#7-docker-compose로-serverclient-구성) | [scripts/05_compose_client.sh](scripts/05_compose_client.sh), [client/request.py](client/request.py) |
-| 실습: container image size 확인 및 줄이기 지점 기록 | [Container image size 확인과 줄이기 실험](#8-container-image-size-확인과-줄이기-실험) | [scripts/06_image_size.sh](scripts/06_image_size.sh) |
-| 실습 마무리: container, compose, volume, SSH port forwarding 정리 | [실습 마무리](#실습-마무리) | [templates/lab-notes.md](templates/lab-notes.md) |
-
-## 추천 진행 순서
-
-1. [../../GLOSSARY.md](../../GLOSSARY.md)에서 챕터 3 용어를 확인한다.
-2. 아래 핵심 정리를 먼저 읽는다.
-3. [scripts/01_check_env.sh](scripts/01_check_env.sh)로 Docker 환경을 확인한다.
-4. [Dockerfile](Dockerfile)을 읽고 image build 과정을 이해한다.
-5. `docker build`로 image를 만든다.
-6. `docker run`으로 container를 실행한다.
-7. `curl`로 container 안의 모델 서버를 호출한다.
-8. Docker Compose 방식도 실행해 본다.
-9. 결과를 [templates/lab-notes.md](templates/lab-notes.md)와 비교한다.
-10. 더 깊게 보고 싶은 문서는 [references.md](references.md)에서 확인한다.
 
 ## 실행 환경 기준
 

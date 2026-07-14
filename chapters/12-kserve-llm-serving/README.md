@@ -19,22 +19,6 @@ KServe의 generative inference, Hugging Face runtime, vLLM backend, Gateway, aut
 - OpenAI-compatible endpoint를 `curl`과 OpenAI SDK로 호출한다.
 - autoscaling 정책을 관찰하고 LLM에서 scale-to-zero가 조심스러운 이유를 이해한다.
 
-## 추천 진행 순서
-
-1. [../../GLOSSARY.md](../../GLOSSARY.md)에서 `Hugging Face Runtime`, `storageUri`, `storage initializer`, `OpenAI-compatible API`, `GPU request`를 확인한다.
-2. [KServe에서 LLM은 무엇이 다른가](#kserve에서-llm은-무엇이-다른가)를 읽고 LLM serving의 제약을 먼저 잡는다.
-3. [KServe LLM 배포 흐름](#kserve-llm-배포-흐름)을 보고 `InferenceService -> runtime -> vLLM backend -> OpenAI-compatible endpoint` 흐름을 이해한다.
-4. [공식 문서 바로가기](#공식-문서-바로가기)에서 현재 KServe LLM 문서의 핵심 위치를 확인한다.
-5. [scripts/01_check_env.sh](scripts/01_check_env.sh)로 KServe, runtime, GPU, gateway 상태를 확인한다.
-6. [scripts/02_prepare_namespace.sh](scripts/02_prepare_namespace.sh)로 실습 namespace를 만든다.
-7. gated/private Hugging Face model을 쓸 경우 [scripts/03_create_hf_secret.sh](scripts/03_create_hf_secret.sh)로 token secret을 준비한다.
-8. [scripts/04_apply_qwen_llm.sh](scripts/04_apply_qwen_llm.sh)로 Qwen LLM `InferenceService`를 배포한다.
-9. [scripts/05_wait_and_inspect.sh](scripts/05_wait_and_inspect.sh)로 Ready 상태와 실패 원인을 확인한다.
-10. [scripts/06_port_forward_gateway.sh](scripts/06_port_forward_gateway.sh)를 별도 터미널에 열어두고 [scripts/07_curl_chat.sh](scripts/07_curl_chat.sh)로 호출한다.
-11. `.venv`를 만든 뒤 [scripts/08_openai_client.sh](scripts/08_openai_client.sh)로 OpenAI SDK 호출을 확인한다.
-12. [scripts/09_check_autoscaling.sh](scripts/09_check_autoscaling.sh)로 scaling 관련 리소스를 관찰한다.
-13. [scripts/10_apply_custom_runtime.sh](scripts/10_apply_custom_runtime.sh)로 custom vLLM `ServingRuntime`을 실제로 적용하고 구조를 확인한다.
-14. [templates/lab-notes.md](templates/lab-notes.md)를 보며 결과를 정리하고 [scripts/11_cleanup.sh](scripts/11_cleanup.sh)로 정리한다.
 
 ## KServe에서 LLM은 무엇이 다른가
 

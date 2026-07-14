@@ -13,14 +13,6 @@
 - TTFT, TTFB, TTFP, TPS, QPS, tokens/sec를 구분한다.
 - GPU memory와 KV cache가 LLM serving에서 중요한 이유를 설명할 수 있다.
 
-## 추천 진행 순서
-
-1. [../../GLOSSARY.md](../../GLOSSARY.md)를 읽고 챕터 1 핵심 용어를 확인한다.
-2. 아래 "모델 서빙 생태계 지도"를 보고 지금 공부하는 범위를 먼저 잡는다.
-3. 아래 핵심 정리를 먼저 읽는다.
-4. [scripts/01_collect_env.sh](scripts/01_collect_env.sh)를 실행해서 현재 환경을 기록한다.
-5. 확인 질문을 보면서 내가 이해한 내용을 점검한다.
-6. 더 깊게 보고 싶은 문서는 [references.md](references.md)에서 확인한다.
 
 ## 모델 서빙 생태계 지도
 

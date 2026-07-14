@@ -16,20 +16,6 @@ vLLM은 업데이트가 빠른 프로젝트다.
 - Docker로 vLLM server를 실행하고, `curl`과 OpenAI SDK client로 호출한다.
 - streaming 응답에서 첫 token과 이후 token이 어떻게 도착하는지 관찰한다.
 
-## 추천 진행 순서
-
-1. [../../GLOSSARY.md](../../GLOSSARY.md)에서 챕터 4 용어를 확인한다.
-2. 아래 핵심 개념 요약을 읽는다.
-3. [공식 문서 바로가기](#공식-문서-바로가기)에서 vLLM Docker, OpenAI-compatible API, model 확인 위치를 본다.
-4. [scripts/01_check_env.sh](scripts/01_check_env.sh)로 Docker/GPU/client 환경을 확인한다.
-5. [scripts/02_run_vllm_docker.sh](scripts/02_run_vllm_docker.sh)로 vLLM server를 실행한다.
-6. [scripts/03_list_models.sh](scripts/03_list_models.sh)로 OpenAI-compatible server가 뜬 것을 확인한다.
-7. [scripts/04_curl_chat.sh](scripts/04_curl_chat.sh)로 non-streaming chat completions를 호출한다.
-8. [scripts/05_curl_chat_stream.sh](scripts/05_curl_chat_stream.sh)로 streaming 응답을 확인한다.
-9. client `.venv`를 만든 뒤 [client/06_openai_client.py](client/06_openai_client.py)를 실행한다.
-10. [scripts/07_collect_runtime_info.sh](scripts/07_collect_runtime_info.sh)로 server 상태를 기록한다.
-11. [scripts/08_stop_server.sh](scripts/08_stop_server.sh)로 container를 종료한다.
-12. 결과를 [templates/lab-notes.md](templates/lab-notes.md)와 비교한다.
 
 ## 공식 문서 바로가기
 

@@ -20,21 +20,6 @@ Kubernetes 설치 방식, NVIDIA device plugin 버전, Ingress controller 구성
 - GPU resource request를 적용하고 NVIDIA device plugin 설치 흐름을 확인한다.
 - rolling update 중 모델 서버가 어떻게 교체되는지 관찰한다.
 
-## 추천 진행 순서
-
-1. [../../GLOSSARY.md](../../GLOSSARY.md)에서 Kubernetes, Deployment, Service, Ingress, PVC, probe 용어를 확인한다.
-2. [Kubernetes 구축 방식 비교](#kubernetes-구축-방식-비교)를 읽고 실습 환경을 정한다.
-3. [공식 문서 바로가기](#공식-문서-바로가기)에서 Kubernetes/minikube/NVIDIA device plugin 문서의 확인 위치를 본다.
-4. [scripts/01_check_env.sh](scripts/01_check_env.sh)로 host 도구와 cluster 상태를 확인한다.
-5. 로컬 실습이면 [scripts/02_start_minikube.sh](scripts/02_start_minikube.sh)로 minikube cluster를 만든다.
-6. [scripts/03_build_and_load_image.sh](scripts/03_build_and_load_image.sh)로 챕터 3 FastAPI image를 만들고 cluster에 전달한다.
-7. [scripts/04_apply_cpu_manifests.sh](scripts/04_apply_cpu_manifests.sh)로 Namespace, PVC, Deployment, Service, Ingress를 배포한다.
-8. [scripts/05_wait_and_inspect.sh](scripts/05_wait_and_inspect.sh)로 Pod, Service, PVC, event를 확인한다.
-9. [scripts/06_port_forward.sh](scripts/06_port_forward.sh)를 실행한 터미널을 열어두고 [scripts/07_curl_generate.sh](scripts/07_curl_generate.sh)로 호출한다.
-10. GPU node가 있으면 [scripts/08_install_nvidia_device_plugin.sh](scripts/08_install_nvidia_device_plugin.sh)로 NVIDIA device plugin 설치 방식을 확인한다.
-11. GPU node가 있으면 [scripts/09_apply_gpu_patch.sh](scripts/09_apply_gpu_patch.sh)로 GPU resource request, nodeSelector, toleration을 적용한다.
-12. [scripts/10_rolling_update.sh](scripts/10_rolling_update.sh)로 rolling update를 관찰한다.
-13. [templates/lab-notes.md](templates/lab-notes.md)를 보며 결과를 정리하고 [scripts/11_cleanup.sh](scripts/11_cleanup.sh)로 정리한다.
 
 ## 이번 챕터에서 사용할 방식
 

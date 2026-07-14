@@ -13,15 +13,6 @@
 - Pydantic으로 request/response schema를 정의한다.
 - `curl`과 Python client로 로컬 모델 서버를 호출한다.
 
-## 추천 진행 순서
-
-1. [../../GLOSSARY.md](../../GLOSSARY.md)에서 챕터 2 용어를 확인한다.
-2. 아래 핵심 정리를 먼저 읽는다.
-3. 가상환경을 만들고 dependency를 설치한다.
-4. [app/main.py](app/main.py)를 실행한다.
-5. `curl`과 Python client로 `/generate`를 호출한다.
-6. 결과를 [templates/lab-notes.md](templates/lab-notes.md)에 기록한다.
-7. 더 깊게 보고 싶은 문서는 [references.md](references.md)에서 확인한다.
 
 ## 실행 환경 기준
 

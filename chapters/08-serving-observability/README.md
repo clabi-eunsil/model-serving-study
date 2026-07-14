@@ -18,21 +18,6 @@
 - API latency, error rate, throughput을 함께 해석한다.
 - token usage, prompt length, completion length를 추적해야 하는 이유를 정리한다.
 
-## 추천 진행 순서
-
-1. [../../GLOSSARY.md](../../GLOSSARY.md)에서 observability, Prometheus, Grafana 관련 용어를 확인한다.
-2. 아래 핵심 개념 요약을 읽는다.
-3. [공식 문서 바로가기](#공식-문서-바로가기)에서 Prometheus/Grafana/DCGM 문서의 확인 위치를 본다.
-4. [scripts/01_check_env.sh](scripts/01_check_env.sh)로 Python/Docker/GPU 환경을 확인한다.
-5. 챕터별 `.venv`를 만들고 dependency를 설치한다.
-6. [scripts/02_run_model_server.sh](scripts/02_run_model_server.sh)로 metric을 노출하는 FastAPI server를 실행한다.
-7. [scripts/03_curl_generate.sh](scripts/03_curl_generate.sh), [scripts/04_curl_metrics.sh](scripts/04_curl_metrics.sh)로 요청과 metric 출력을 확인한다.
-8. [scripts/05_start_monitoring.sh](scripts/05_start_monitoring.sh)로 Prometheus/Grafana를 실행한다.
-9. [scripts/06_check_prometheus_targets.sh](scripts/06_check_prometheus_targets.sh)로 scrape 상태를 확인한다.
-10. [scripts/07_generate_load.sh](scripts/07_generate_load.sh)로 그래프에 보일 traffic을 만든다.
-11. [scripts/08_query_prometheus.sh](scripts/08_query_prometheus.sh)로 PromQL query 결과를 확인한다.
-12. GPU 서버라면 [scripts/09_start_dcgm_exporter.sh](scripts/09_start_dcgm_exporter.sh)로 GPU metric을 확인한다.
-13. [scripts/10_stop_monitoring.sh](scripts/10_stop_monitoring.sh)와 [templates/lab-notes.md](templates/lab-notes.md)를 보며 실습을 마무리한다.
 
 ## 공식 문서 바로가기
 

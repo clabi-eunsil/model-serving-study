@@ -22,20 +22,6 @@ Langfuse SDK, Cloud region, self-hosting 방식, prompt/evaluation 기능은 업
 - vLLM/NIM 같은 OpenAI-compatible endpoint 호출 결과를 Langfuse generation으로 기록한다.
 - prompt별 latency와 token usage 비교 결과를 정리한다.
 
-## 추천 진행 순서
-
-1. [../../GLOSSARY.md](../../GLOSSARY.md)에서 Langfuse, trace, span, generation 용어를 확인한다.
-2. 아래 핵심 개념 요약을 읽는다.
-3. [공식 문서 바로가기](#공식-문서-바로가기)에서 Langfuse SDK, prompt, dataset, self-hosting 문서 위치를 본다.
-4. 챕터별 `.venv`를 만든다.
-5. [scripts/01_check_env.sh](scripts/01_check_env.sh)로 환경을 확인한다.
-6. [scripts/02_send_trace.sh](scripts/02_send_trace.sh)를 dry-run으로 실행해 trace 구조를 먼저 본다.
-7. Langfuse key가 있으면 `DRY_RUN=false`로 실제 trace를 보낸다.
-8. [scripts/03_prepare_vllm_endpoint.sh](scripts/03_prepare_vllm_endpoint.sh)로 OpenAI-compatible endpoint 준비 흐름을 확인한다.
-9. [scripts/04_trace_openai_compatible.sh](scripts/04_trace_openai_compatible.sh)로 endpoint 호출 결과를 trace한다.
-10. [scripts/05_compare_prompts.sh](scripts/05_compare_prompts.sh)로 prompt별 latency/token usage 비교 CSV를 만든다.
-11. 폐쇄망이나 local 실습이 필요하면 [심화 실습: Self-host Langfuse](#심화-실습-self-host-langfuse) 섹션을 진행한다.
-12. [templates/lab-notes.md](templates/lab-notes.md)를 보며 결과를 정리하고 [scripts/12_cleanup.sh](scripts/12_cleanup.sh)로 마무리한다.
 
 ## 공식 문서 바로가기
 

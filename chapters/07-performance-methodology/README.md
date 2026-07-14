@@ -18,21 +18,6 @@
 - OpenAI-compatible endpoint에 custom Python async benchmark를 실행한다.
 - benchmark 결과 CSV를 요약하고 다음 실험과 비교한다.
 
-## 추천 진행 순서
-
-1. [../../GLOSSARY.md](../../GLOSSARY.md)에서 performance 관련 용어를 확인한다.
-2. 아래 핵심 개념 요약을 읽는다.
-3. [공식 문서 바로가기](#공식-문서-바로가기)에서 benchmark 도구별 확인 지점을 본다.
-4. benchmark 대상 server를 다시 실행한다. 예: 챕터 4/5의 vLLM 또는 챕터 6의 NIM.
-5. [scripts/01_check_env.sh](scripts/01_check_env.sh)로 client 환경과 endpoint를 확인한다.
-6. Python `.venv`를 만들고 dependency를 설치한다.
-7. [scripts/02_warmup_endpoint.sh](scripts/02_warmup_endpoint.sh)로 warmup 요청을 보낸다.
-8. [scripts/03_run_single_benchmark.sh](scripts/03_run_single_benchmark.sh)로 단일 조건 benchmark를 실행한다.
-9. [scripts/04_run_benchmark_matrix.sh](scripts/04_run_benchmark_matrix.sh)로 concurrency, prompt 길이, output 길이를 바꿔본다.
-10. [scripts/05_run_streaming_ttft.sh](scripts/05_run_streaming_ttft.sh)로 streaming TTFT를 관찰한다.
-11. [scripts/06_summarize_results.sh](scripts/06_summarize_results.sh)로 CSV 결과를 요약한다.
-12. [scripts/07_collect_context.sh](scripts/07_collect_context.sh)로 server log, GPU 상태, endpoint 정보를 함께 기록한다.
-13. [scripts/08_cleanup.sh](scripts/08_cleanup.sh)와 [templates/lab-notes.md](templates/lab-notes.md)를 보며 실습을 마무리한다.
 
 ## 공식 문서 바로가기
 
